@@ -10,14 +10,32 @@ namespace SnakeGame.MonoBehaviours
         [SerializeField] private List<SnakeBody> Bodies;
 
         private Snake _snake;
+        private Vector2 _movementDirection;
 
         private void Start()
         {
+            _movementDirection = Vector2.up;
+
             _snake = new Snake(Bodies.Select(
                     snakeBody => new Body(snakeBody, snakeBody.Renderer.size)).ToArray(),
-                    Vector2.up);
+                    _movementDirection);
 
             StartCoroutine(Move());
+        }
+
+        private void Update()
+        {
+            float horizontal = Input.GetAxisRaw("Horizontal");
+            float vertical = Input.GetAxisRaw("Vertical");
+            if (vertical != 0f)
+            {
+                horizontal = 0f;
+            }
+
+            if (horizontal != 0f || vertical != 0f)
+            {
+                _movementDirection = new Vector2(horizontal, vertical);
+            }
         }
 
         private IEnumerator Move()
@@ -28,8 +46,7 @@ namespace SnakeGame.MonoBehaviours
 
                 yield return new WaitForSeconds(0.2f);
 
-                int randomIndex = Random.Range(0, Snake.AllowedDirections.Count);
-                _snake.ChangeMovementDirection(Snake.AllowedDirections[randomIndex]);
+                _snake.ChangeMovementDirection(_movementDirection);
             }
         }
     }
