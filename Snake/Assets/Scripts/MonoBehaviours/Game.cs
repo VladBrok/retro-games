@@ -9,13 +9,13 @@ namespace SnakeGame.MonoBehaviours
     {
         [SerializeField] private List<SnakeBody> _bodies;
 
-        private Snake _snake;
         private SnakeController _snakeController;
 
         private void Start()
         {
-            _snake = new Snake(_bodies.ToArray(), Vector2.up);
-            _snakeController = new SnakeController(_snake);
+            var snake = new Snake(_bodies.ToArray(), Vector2.up);
+            var input = new KeyboardInput();
+            _snakeController = new SnakeController(snake, input);
 
             StartCoroutine(Move());
         }

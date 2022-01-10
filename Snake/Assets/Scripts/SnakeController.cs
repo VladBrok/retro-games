@@ -6,11 +6,13 @@ namespace SnakeGame
     public class SnakeController
     {
         private readonly Snake _snake;
+        private readonly IInputProvider _input;
         private Vector2 _movementDirection;
 
-        public SnakeController(Snake snake)
+        public SnakeController(Snake snake, IInputProvider input)
         {
             _snake = snake;
+            _input = input;
         }
 
         public void UpdateMovement()
@@ -21,17 +23,14 @@ namespace SnakeGame
 
         public void UpdateInput()
         {
-            float horizontal = Input.GetAxisRaw("Horizontal");
-            float vertical = Input.GetAxisRaw("Vertical");
+            float horizontal = _input.Horizontal;
+            float vertical = _input.Vertical;
             if (vertical != 0f)
             {
                 horizontal = 0f;
             }
-
-            if (horizontal != 0f || vertical != 0f)
-            {
-                _movementDirection = new Vector2(horizontal, vertical);
-            }
+            
+            _movementDirection = new Vector2(horizontal, vertical);
         }
     }
 }
