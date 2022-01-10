@@ -18,19 +18,20 @@ namespace SnakeGame
                 Vector2.right
             });
 
-        private LinkedList<Body> _bodies;
+        private LinkedList<IBody> _bodies;
         private Vector2 _movementDirection;
 
-        public Snake(Body[] bodies, Vector2 movementDirection)
+        public Snake(Vector2 movementDirection, params IBody[] bodies)
         {
-            _bodies = new LinkedList<Body>(bodies);
+            
+            _bodies = new LinkedList<IBody>(bodies);
             ChangeMovementDirection(movementDirection);
         }
 
         public void Move()
         {
-            Body head = _bodies.First.Value;
-            Body tip = _bodies.Last.Value;
+            IBody head = _bodies.First.Value;
+            IBody tip = _bodies.Last.Value;
 
             tip.Position = head.Position + new Vector2(
                 head.Size.x * _movementDirection.x,
@@ -40,20 +41,20 @@ namespace SnakeGame
             _bodies.AddFirst(tip);
         }
 
-        public void AddBody(Body item)
+        public void AddBody(IBody item)
         {
             _bodies.AddLast(item);
         }
 
-        public void ChangeMovementDirection(Vector2 value)
+        public void ChangeMovementDirection(Vector2 newDirection)
         {
-            if (!AllowedDirections.Contains(value)) 
-                throw new ArgumentException(value.ToString());
+            if (!AllowedDirections.Contains(newDirection)) 
+                throw new ArgumentException(newDirection.ToString());
 
-            if (_movementDirection.x == 0f && value.x != 0f
-                || _movementDirection.y == 0f && value.y != 0f)
+            if (_movementDirection.x == 0f && newDirection.x != 0f
+                || _movementDirection.y == 0f && newDirection.y != 0f)
             {
-                _movementDirection = value;
+                _movementDirection = newDirection;
             }
         }
     }

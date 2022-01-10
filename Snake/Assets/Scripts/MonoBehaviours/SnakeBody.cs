@@ -3,7 +3,7 @@
 namespace SnakeGame.MonoBehaviours
 {
     [RequireComponent(typeof(SpriteRenderer))]
-    public class SnakeBody : MonoBehaviour, IPositionProvider
+    public class SnakeBody : MonoBehaviour, IBody
     {
         private SpriteRenderer _renderer;
 
@@ -18,11 +18,11 @@ namespace SnakeGame.MonoBehaviours
                 transform.position = value;
             }
         }
-        public SpriteRenderer Renderer
+        public Vector2 Size
         {
             get
             {
-                return _renderer;
+                return _renderer.size;
             }
         }
 

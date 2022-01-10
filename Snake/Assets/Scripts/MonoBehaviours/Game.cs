@@ -7,7 +7,7 @@ namespace SnakeGame.MonoBehaviours
 {
     public class Game : MonoBehaviour
     {
-        [SerializeField] private List<SnakeBody> Bodies;
+        [SerializeField] private List<SnakeBody> _bodies;
 
         private Snake _snake;
         private Vector2 _movementDirection;
@@ -16,9 +16,7 @@ namespace SnakeGame.MonoBehaviours
         {
             _movementDirection = Vector2.up;
 
-            _snake = new Snake(Bodies.Select(
-                    snakeBody => new Body(snakeBody, snakeBody.Renderer.size)).ToArray(),
-                    _movementDirection);
+            _snake = new Snake(_movementDirection, _bodies.ToArray());
 
             StartCoroutine(Move());
         }
