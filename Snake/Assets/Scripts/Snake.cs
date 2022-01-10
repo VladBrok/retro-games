@@ -24,13 +24,16 @@ namespace SnakeGame
         {
             IBody head = _bodies.First.Value;
             IBody tip = _bodies.Last.Value;
+            _bodies.RemoveFirst();
+            _bodies.RemoveLast();
 
-            tip.Position = head.Position + new Vector2(
+            tip.Position = head.Position;
+            head.Position = head.Position + new Vector2(
                 head.Size.x * _movementDirection.x,
                 head.Size.y * _movementDirection.y);
 
-            _bodies.RemoveLast();
             _bodies.AddFirst(tip);
+            _bodies.AddFirst(head);
         }
 
         public void AddBody(IBody item)
