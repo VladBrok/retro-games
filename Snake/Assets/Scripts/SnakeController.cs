@@ -14,8 +14,6 @@ namespace SnakeGame
             _snake = snake;
             _input = input;
             _movementDirection = snake.MovementDirection;
-
-            Debug.Log(snake.MovementDirection);
         }
 
         public void UpdateMovement()

@@ -14,6 +14,11 @@ namespace SnakeGame
 
         public Snake(IBody[] bodies)
         {
+            if (bodies.Count() < 2)
+            {
+                throw new ArgumentException("Minimum body count: 2");
+            }
+
             _bodies = new LinkedList<IBody>(bodies);
             _movementDirection = Vector2.up;
         }
