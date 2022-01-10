@@ -13,6 +13,9 @@ namespace SnakeGame
         {
             _snake = snake;
             _input = input;
+            _movementDirection = snake.MovementDirection;
+
+            Debug.Log(snake.MovementDirection);
         }
 
         public void UpdateMovement()
@@ -29,8 +32,11 @@ namespace SnakeGame
             {
                 horizontal = 0f;
             }
-            
-            _movementDirection = new Vector2(horizontal, vertical);
+
+            if (horizontal != 0f || vertical != 0f)
+            {
+                _movementDirection = new Vector2(horizontal, vertical);
+            }
         }
     }
 }

@@ -12,11 +12,13 @@ namespace SnakeGame
         private LinkedList<IBody> _bodies;
         private Vector2 _movementDirection;
 
-        public Snake(IBody[] bodies, Vector2 movementDirection)
+        public Snake(IBody[] bodies)
         {
             _bodies = new LinkedList<IBody>(bodies);
-            ChangeMovementDirection(movementDirection);
+            _movementDirection = Vector2.up;
         }
+
+        public Vector2 MovementDirection { get { return _movementDirection; } }
 
         public void Move()
         {
@@ -41,12 +43,18 @@ namespace SnakeGame
             if (newDirection.x != 0f && newDirection.y != 0f)
             {
                 throw new ArgumentException(
-                    "Unable to move in two directions simultaneously", 
+                    "Either x or y component of the direction should be zero.", 
+                    newDirection.ToString());
+            }
+            if (newDirection == Vector2.zero)
+            {
+                throw new ArgumentException(
+                    "The direction should not be zero.",
                     newDirection.ToString());
             }
 
-            if (_movementDirection.x == 0f && newDirection.x != 0f
-                || _movementDirection.y == 0f && newDirection.y != 0f)
+            if (_movementDirection.x != 0f && newDirection.x == 0f
+                || _movementDirection.y != 0f && newDirection.y == 0f)
             {
                 _movementDirection = newDirection;
             }
