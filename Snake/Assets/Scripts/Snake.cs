@@ -9,21 +9,11 @@ namespace SnakeGame
 {
     public class Snake
     {
-        public static readonly ReadOnlyCollection<Vector2> AllowedDirections = 
-            Array.AsReadOnly(new Vector2[]
-            {
-                Vector2.up, 
-                Vector2.down, 
-                Vector2.left, 
-                Vector2.right
-            });
-
         private LinkedList<IBody> _bodies;
         private Vector2 _movementDirection;
 
-        public Snake(Vector2 movementDirection, params IBody[] bodies)
+        public Snake(IBody[] bodies, Vector2 movementDirection)
         {
-            
             _bodies = new LinkedList<IBody>(bodies);
             ChangeMovementDirection(movementDirection);
         }
@@ -48,8 +38,12 @@ namespace SnakeGame
 
         public void ChangeMovementDirection(Vector2 newDirection)
         {
-            if (!AllowedDirections.Contains(newDirection)) 
-                throw new ArgumentException(newDirection.ToString());
+            if (newDirection.x != 0f && newDirection.y != 0f)
+            {
+                throw new ArgumentException(
+                    "Unable to move in two directions simultaneously", 
+                    newDirection.ToString());
+            }
 
             if (_movementDirection.x == 0f && newDirection.x != 0f
                 || _movementDirection.y == 0f && newDirection.y != 0f)

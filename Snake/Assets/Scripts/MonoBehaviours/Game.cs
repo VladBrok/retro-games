@@ -10,41 +10,28 @@ namespace SnakeGame.MonoBehaviours
         [SerializeField] private List<SnakeBody> _bodies;
 
         private Snake _snake;
-        private Vector2 _movementDirection;
+        private SnakeController _snakeController;
 
         private void Start()
         {
-            _movementDirection = Vector2.up;
-
-            _snake = new Snake(_movementDirection, _bodies.ToArray());
+            _snake = new Snake(_bodies.ToArray(), Vector2.up);
+            _snakeController = new SnakeController(_snake);
 
             StartCoroutine(Move());
         }
 
         private void Update()
         {
-            float horizontal = Input.GetAxisRaw("Horizontal");
-            float vertical = Input.GetAxisRaw("Vertical");
-            if (vertical != 0f)
-            {
-                horizontal = 0f;
-            }
-
-            if (horizontal != 0f || vertical != 0f)
-            {
-                _movementDirection = new Vector2(horizontal, vertical);
-            }
+            _snakeController.UpdateInput();
         }
 
         private IEnumerator Move()
         {
             for (; ; )
             {
-                _snake.Move();
+                _snakeController.UpdateMovement();
 
                 yield return new WaitForSeconds(0.2f);
-
-                _snake.ChangeMovementDirection(_movementDirection);
             }
         }
     }
