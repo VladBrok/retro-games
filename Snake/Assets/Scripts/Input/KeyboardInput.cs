@@ -1,6 +1,5 @@
-﻿using UnityEngine;
-
-namespace SnakeGame
+﻿
+namespace SnakeGame.Input
 {
     public class KeyboardInput : IInputProvider
     {
@@ -8,15 +7,15 @@ namespace SnakeGame
         {
             get 
             {
-                return Input.GetAxisRaw("Horizontal"); 
+                return UnityEngine.Input.GetAxisRaw("Horizontal"); 
             }
         }
 
         public float Vertical
         {
             get 
-            { 
-                return Input.GetAxisRaw("Vertical"); 
+            {
+                return UnityEngine.Input.GetAxisRaw("Vertical"); 
             }
         }
     }

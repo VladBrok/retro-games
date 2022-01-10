@@ -5,35 +5,30 @@ using UnityEngine;
 
 namespace SnakeGame
 {
-    public class Snake<T> where T : IBody
+    public class Snake
     {
-        private LinkedList<T> _bodies;
+        private LinkedList<IBody> _bodies;
         private Vector2 _movementDirection;
-        private T _bodyToAdd;
 
-        public Snake(T[] bodies)
+        public Snake(IBody[] bodies)
         {
             if (bodies.Count() < 2)
             {
                 throw new ArgumentException("Minimum body count: 2");
             }
 
-            _bodies = new LinkedList<T>(bodies);
+            _bodies = new LinkedList<IBody>(bodies);
             _movementDirection = Vector2.up;
         }
-
-        public event Action<T> BodyAdded = delegate { };
 
         public Vector2 MovementDirection { get { return _movementDirection; } }
 
         public void Move()
         {
-            T head = _bodies.First.Value;
-            T tip = _bodies.Last.Value;
+            IBody head = _bodies.First.Value;
+            IBody tip = _bodies.Last.Value;
             _bodies.RemoveFirst();
             _bodies.RemoveLast();
-
-            AddBodyIfNeeded(tip); 
 
             tip.Position = head.Position;
             head.Position = head.Position + new Vector2(
@@ -44,9 +39,10 @@ namespace SnakeGame
             _bodies.AddFirst(head);
         }
 
-        public void RequestBodyAddition(T item)
+        public void AddBody(IBody item)
         {
-            _bodyToAdd = item;
+            item.Position = _bodies.Last.Value.Position;
+            _bodies.AddLast(item);
         }
 
         public void ChangeMovementDirection(Vector2 newDirection)
@@ -68,17 +64,6 @@ namespace SnakeGame
                 || _movementDirection.y != 0f && newDirection.y == 0f)
             {
                 _movementDirection = newDirection;
-            }
-        }
-
-        private void AddBodyIfNeeded(T tip)
-        {
-            if (_bodyToAdd != null)
-            {
-                _bodyToAdd.Position = tip.Position;
-                _bodies.AddLast(_bodyToAdd);
-                _bodyToAdd = default(T);
-                BodyAdded(_bodies.Last.Value);
             }
         }
     }

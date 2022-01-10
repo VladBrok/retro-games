@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using SnakeGame.Input;
 
 namespace SnakeGame.MonoBehaviours
 {
@@ -10,26 +11,19 @@ namespace SnakeGame.MonoBehaviours
         [SerializeField] private SnakeBody _bodyPrefab;
         [SerializeField] private Field _field;
 
-        private SnakeController<SnakeBody> _snakeController;
+        private SnakeController _snakeController;
 
         private void Start()
         {
-            var snake = new Snake<SnakeBody>(new SnakeBody[] 
+            var snake = new Snake(new SnakeBody[] 
             { 
                 Instantiate(_headPrefab),
                 Instantiate(_bodyPrefab)
             });
             var input = new KeyboardInput();
-            _snakeController = new SnakeController<SnakeBody>(snake, input);
+            _snakeController = new SnakeController(snake, input);
 
-            snake.BodyAdded += body => body.gameObject.SetActive(true);
-
-            _field.Food.TriggerEntered += () => 
-            {
-                var body = Instantiate(_bodyPrefab);
-                body.gameObject.SetActive(false);
-                snake.RequestBodyAddition(body);
-            };
+            _field.Food.TriggerEntered += () => { snake.AddBody(Instantiate(_bodyPrefab)); };
 
             StartCoroutine(Move());
         }

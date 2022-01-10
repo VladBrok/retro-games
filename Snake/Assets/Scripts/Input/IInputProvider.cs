@@ -1,5 +1,5 @@
 ﻿
-namespace SnakeGame
+namespace SnakeGame.Input
 {
     public interface IInputProvider
     {

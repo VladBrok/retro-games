@@ -1,15 +1,16 @@
 ﻿using System;
 using UnityEngine;
+using SnakeGame.Input;
 
 namespace SnakeGame
 {
-    public class SnakeController<T> where T : IBody
+    public class SnakeController
     {
-        private readonly Snake<T> _snake;
+        private readonly Snake _snake;
         private readonly IInputProvider _input;
         private Vector2 _movementDirection;
 
-        public SnakeController(Snake<T> snake, IInputProvider input)
+        public SnakeController(Snake snake, IInputProvider input)
         {
             _snake = snake;
             _input = input;
