@@ -5,30 +5,35 @@ using UnityEngine;
 
 namespace SnakeGame
 {
-    public class Snake
+    public class Snake<T> where T : IBody
     {
-        private LinkedList<IBody> _bodies;
+        private LinkedList<T> _bodies;
         private Vector2 _movementDirection;
+        private T _bodyToAdd;
 
-        public Snake(IBody[] bodies)
+        public Snake(T[] bodies)
         {
             if (bodies.Count() < 2)
             {
                 throw new ArgumentException("Minimum body count: 2");
             }
 
-            _bodies = new LinkedList<IBody>(bodies);
+            _bodies = new LinkedList<T>(bodies);
             _movementDirection = Vector2.up;
         }
+
+        public event Action<T> BodyAdded = delegate { };
 
         public Vector2 MovementDirection { get { return _movementDirection; } }
 
         public void Move()
         {
-            IBody head = _bodies.First.Value;
-            IBody tip = _bodies.Last.Value;
+            T head = _bodies.First.Value;
+            T tip = _bodies.Last.Value;
             _bodies.RemoveFirst();
             _bodies.RemoveLast();
+
+            AddBodyIfNeeded(tip); 
 
             tip.Position = head.Position;
             head.Position = head.Position + new Vector2(
@@ -39,9 +44,9 @@ namespace SnakeGame
             _bodies.AddFirst(head);
         }
 
-        public void AddBody(IBody item)
+        public void RequestBodyAddition(T item)
         {
-            _bodies.AddLast(item);
+            _bodyToAdd = item;
         }
 
         public void ChangeMovementDirection(Vector2 newDirection)
@@ -63,6 +68,17 @@ namespace SnakeGame
                 || _movementDirection.y != 0f && newDirection.y == 0f)
             {
                 _movementDirection = newDirection;
+            }
+        }
+
+        private void AddBodyIfNeeded(T tip)
+        {
+            if (_bodyToAdd != null)
+            {
+                _bodyToAdd.Position = tip.Position;
+                _bodies.AddLast(_bodyToAdd);
+                _bodyToAdd = default(T);
+                BodyAdded(_bodies.Last.Value);
             }
         }
     }

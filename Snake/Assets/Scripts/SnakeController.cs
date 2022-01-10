@@ -3,13 +3,13 @@ using UnityEngine;
 
 namespace SnakeGame
 {
-    public class SnakeController
+    public class SnakeController<T> where T : IBody
     {
-        private readonly Snake _snake;
+        private readonly Snake<T> _snake;
         private readonly IInputProvider _input;
         private Vector2 _movementDirection;
 
-        public SnakeController(Snake snake, IInputProvider input)
+        public SnakeController(Snake<T> snake, IInputProvider input)
         {
             _snake = snake;
             _input = input;
