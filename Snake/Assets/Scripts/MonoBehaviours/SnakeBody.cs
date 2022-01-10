@@ -18,13 +18,7 @@ namespace SnakeGame.MonoBehaviours
                 transform.position = value;
             }
         }
-        public Vector2 Size
-        {
-            get
-            {
-                return _size;
-            }
-        }
+        public Vector2 Size { get { return _size; } }
 
         private void Awake()
         {

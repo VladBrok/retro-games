@@ -13,6 +13,7 @@ namespace SnakeGame.MonoBehaviours
         private void Start()
         {
             var snake = new Snake(_bodies.ToArray());
+
             var input = new KeyboardInput();
             _snakeController = new SnakeController(snake, input);
 
