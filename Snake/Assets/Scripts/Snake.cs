@@ -7,18 +7,20 @@ namespace SnakeGame
 {
     public class Snake
     {
+        public static readonly int MinBodyCount = 2;
+
         private LinkedList<IBody> _bodies;
         private Vector2 _movementDirection;
 
-        public Snake(IBody[] bodies)
+        public Snake(IBody[] bodies, Vector2 movementDirection)
         {
-            if (bodies.Count() < 2)
+            if (bodies.Count() < MinBodyCount)
             {
-                throw new ArgumentException("Minimum body count: 2");
+                throw new ArgumentException("Minimum body count: " + MinBodyCount);
             }
 
             _bodies = new LinkedList<IBody>(bodies);
-            _movementDirection = Vector2.up;
+            ChangeMovementDirection(movementDirection);
         }
 
         public Vector2 MovementDirection { get { return _movementDirection; } }
@@ -47,21 +49,15 @@ namespace SnakeGame
 
         public void ChangeMovementDirection(Vector2 newDirection)
         {
-            if (newDirection.x != 0f && newDirection.y != 0f)
+            if ((newDirection.x != 0f && newDirection.y != 0f)
+                 || newDirection == Vector2.zero)
             {
-                throw new ArgumentException(
-                    "Either x or y component of the direction should be zero.", 
-                    newDirection.ToString());
-            }
-            if (newDirection == Vector2.zero)
-            {
-                throw new ArgumentException(
-                    "The direction should not be zero.",
-                    newDirection.ToString());
+                throw new ArgumentException(newDirection.ToString());
             }
 
             if (_movementDirection.x != 0f && newDirection.x == 0f
-                || _movementDirection.y != 0f && newDirection.y == 0f)
+                || _movementDirection.y != 0f && newDirection.y == 0f
+                || _movementDirection == default(Vector2))
             {
                 _movementDirection = newDirection;
             }

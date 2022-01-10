@@ -19,7 +19,7 @@ namespace SnakeGame.MonoBehaviours
             { 
                 Instantiate(_headPrefab),
                 Instantiate(_bodyPrefab)
-            });
+            }, Vector2.up);
             var input = new KeyboardInput();
             _snakeController = new SnakeController(snake, input);
 
