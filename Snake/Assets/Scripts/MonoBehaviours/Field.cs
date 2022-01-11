@@ -1,8 +1,11 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace SnakeGame.MonoBehaviours
 {
+    // TODO: Move all logic from this class to a raw c# class and add tests.
     public class Field : MonoBehaviour
     {
         [SerializeField] private SpriteRenderer _background;
@@ -12,7 +15,12 @@ namespace SnakeGame.MonoBehaviours
         private TriggerBody _food;
         private IBody _snakeHead;
 
-        public TriggerBody Food { get { return _food; } }
+        public event Action SnakeLeftField = delegate { };
+
+        public TriggerBody Food 
+        { 
+            get { return _food; } 
+        }
 
         public void Initialize(IBody snakeHead)
         {
@@ -32,8 +40,7 @@ namespace SnakeGame.MonoBehaviours
         {
             if (!IsSnakeOnField())
             {
-                // FIXME
-                Debug.Log("<color=red>Game over.</color>");
+                SnakeLeftField();
             }
         }
 

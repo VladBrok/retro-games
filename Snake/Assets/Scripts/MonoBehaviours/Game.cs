@@ -21,6 +21,7 @@ namespace SnakeGame.MonoBehaviours
             _snakeController = new SnakeController(snake, input);
 
             _field.Initialize(snakeHead);
+            _field.SnakeLeftField += GameOver;
             _field.Food.TriggerEntered += () => { snake.AddBody(CreateBody()); };
 
             StartCoroutine(Move());
@@ -43,9 +44,13 @@ namespace SnakeGame.MonoBehaviours
         private TriggerBody CreateBody()
         {
             TriggerBody body = Instantiate(_bodyPrefab);
-            // FIXME
-            body.TriggerEntered += () => Debug.Log("<color=red>Collided with head</color>");
+            body.TriggerEntered += GameOver;
             return body;
+        }
+
+        private void GameOver()
+        {
+            Debug.Log("<color=red>GameOver.</color>");
         }
     }
 }

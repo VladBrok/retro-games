@@ -23,7 +23,10 @@ namespace SnakeGame
             ChangeMovementDirection(movementDirection);
         }
 
-        public Vector2 MovementDirection { get { return _movementDirection; } }
+        public Vector2 MovementDirection 
+        { 
+            get { return _movementDirection; } 
+        }
 
         public void Move()
         {
