@@ -30,13 +30,20 @@ namespace SnakeGame.MonoBehaviours
 
         private void Update()
         {
-            bool snakeInsideField = _bounds.Contains(_snakeHead.Position);
-
-            if (!snakeInsideField)
+            if (!IsSnakeOnField())
             {
                 // FIXME
                 Debug.Log("<color=red>Game over.</color>");
             }
+        }
+
+        private bool IsSnakeOnField()
+        {
+            float offset = 0.5f;
+            var snakePos = new Vector2(
+                _snakeHead.Position.x + offset, 
+                _snakeHead.Position.y - offset);
+            return _bounds.Contains(snakePos);
         }
 
         private void RespawnFood()
