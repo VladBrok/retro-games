@@ -28,12 +28,11 @@ namespace SnakeGame.MonoBehaviours
         protected virtual void Awake()
         {
             var collider = GetComponent<Collider2D>();
+            _size = collider.bounds.size;
 
             Debug.Assert(
                 collider.isTrigger,
                 "Collider2D of the " + gameObject.name + " should be a trigger");
-
-            _size = collider.bounds.size;
         }
     }
 }
