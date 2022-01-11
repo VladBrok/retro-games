@@ -10,6 +10,7 @@ namespace SnakeGame.MonoBehaviours
         [SerializeField] private TriggerBody _headPrefab;
         [SerializeField] private TriggerBody _bodyPrefab;
         [SerializeField] private Field _field;
+        [SerializeField] private UI _ui;
 
         private SnakeController _snakeController;
 
@@ -18,11 +19,12 @@ namespace SnakeGame.MonoBehaviours
             TriggerBody snakeHead = Instantiate(_headPrefab);
             var snake = new Snake(new TriggerBody[] { snakeHead, CreateBody() }, Vector2.up);
             var input = new KeyboardInput();
-            _snakeController = new SnakeController(snake, input);
+            _snakeController = new SnakeController(snake, input, _field.Food, CreateBody);
 
             _field.Initialize(snakeHead);
             _field.SnakeLeftField += GameOver;
-            _field.Food.TriggerEntered += () => { snake.AddBody(CreateBody()); };
+
+            _ui.Initialize(_field.Food);
 
             StartCoroutine(Move());
         }
@@ -50,7 +52,7 @@ namespace SnakeGame.MonoBehaviours
 
         private void GameOver()
         {
-            Debug.Log("<color=red>GameOver.</color>");
+            _ui.GameOver();
         }
     }
 }

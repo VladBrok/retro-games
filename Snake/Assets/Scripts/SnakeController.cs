@@ -10,10 +10,15 @@ namespace SnakeGame
         private readonly IInputProvider _input;
         private Vector2 _movementDirection;
 
-        public SnakeController(Snake snake, IInputProvider input)
+        public SnakeController(Snake snake, 
+                               IInputProvider input, 
+                               ITrigger food, 
+                               Func<IBody> createBody)
         {
             _snake = snake;
             _input = input;
+            food.TriggerEntered += () => _snake.AddBody(createBody());
+
             _movementDirection = snake.MovementDirection;
         }
 
