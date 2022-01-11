@@ -7,22 +7,24 @@ namespace SnakeGame.MonoBehaviours
 {
     public class Game : MonoBehaviour
     {
-        [SerializeField] private SnakeBody _headPrefab;
-        [SerializeField] private SnakeBody _bodyPrefab;
+        [SerializeField] private SpriteBody _headPrefab;
+        [SerializeField] private SpriteBody _bodyPrefab;
         [SerializeField] private Field _field;
 
         private SnakeController _snakeController;
 
         private void Start()
         {
-            var snake = new Snake(new SnakeBody[] 
+            SpriteBody snakeHead = Instantiate(_headPrefab);
+            var snake = new Snake(new SpriteBody[] 
             { 
-                Instantiate(_headPrefab),
+                snakeHead,
                 Instantiate(_bodyPrefab)
             }, Vector2.up);
             var input = new KeyboardInput();
             _snakeController = new SnakeController(snake, input);
 
+            _field.Initialize(snakeHead);
             _field.Food.TriggerEntered += () => { snake.AddBody(Instantiate(_bodyPrefab)); };
 
             StartCoroutine(Move());

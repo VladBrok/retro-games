@@ -3,7 +3,7 @@
 namespace SnakeGame.MonoBehaviours
 {
     [RequireComponent(typeof(SpriteRenderer))]
-    public class SnakeBody : MonoBehaviour, IBody
+    public class SpriteBody : MonoBehaviour, IBody
     {
         private Vector2 _size;
 
@@ -20,7 +20,7 @@ namespace SnakeGame.MonoBehaviours
         }
         public Vector2 Size { get { return _size; } }
 
-        private void Awake()
+        protected virtual void Awake()
         {
             var renderer = GetComponent<SpriteRenderer>();
             _size = new Vector2(
