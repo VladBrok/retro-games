@@ -5,7 +5,7 @@ namespace SnakeGame.MonoBehaviours
 {
     public class Field : MonoBehaviour
     {
-        [SerializeField] private Vector2 _size;
+        [SerializeField] private SpriteRenderer _background;
         [SerializeField] private TriggerBody _foodPrefab;
 
         private Bounds _bounds;
@@ -21,7 +21,7 @@ namespace SnakeGame.MonoBehaviours
 
         private void Awake()
         {
-            _bounds = new Bounds(transform.position, _size);
+            _bounds = _background.bounds;
             _food = Instantiate(_foodPrefab, transform);
             _food.TriggerEntered += RespawnFood;
 
@@ -41,20 +41,23 @@ namespace SnakeGame.MonoBehaviours
 
         private void RespawnFood()
         {
-            StartCoroutine(HideFoodTemporarly());
-
-            var randomPosition = new Vector2(
-                Mathf.Floor(Random.Range(_bounds.min.x, _bounds.max.x - _food.Size.x)),
-                Mathf.Floor(Random.Range(_bounds.min.y + _food.Size.y, _bounds.max.y)));
-
-            _food.Position = randomPosition;
+            StartCoroutine(HideTemporarly(_food.gameObject));
+            _food.Position = GetRandomPosition();
         }
 
-        private IEnumerator HideFoodTemporarly()
+        private IEnumerator HideTemporarly(GameObject toHide)
         {
-            _food.gameObject.SetActive(false);
+            toHide.SetActive(false);
             yield return new WaitForSeconds(0.1f);
-            _food.gameObject.SetActive(true);
+            toHide.SetActive(true);
+        }
+
+        private Vector2 GetRandomPosition()
+        {
+            float offset = 1f;
+            return new Vector2(
+                Mathf.Floor(Random.Range(_bounds.min.x, _bounds.max.x - offset)),
+                Mathf.Floor(Random.Range(_bounds.min.y + offset, _bounds.max.y)));  
         }
     }
 }
