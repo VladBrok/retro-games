@@ -31,7 +31,7 @@ namespace SnakeGame.MonoBehaviours
 
             Debug.Assert(
                 collider.isTrigger,
-                "Collider2D should be a trigger");
+                "Collider2D of the " + gameObject.name + " should be a trigger");
 
             _size = collider.bounds.size;
         }

@@ -36,8 +36,6 @@ namespace SnakeGame.MonoBehaviours
             {
                 // FIXME
                 Debug.Log("<color=red>Game over.</color>");
-                Time.timeScale = 0f;
-                gameObject.SetActive(false);
             }
         }
 
