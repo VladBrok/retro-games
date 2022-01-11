@@ -6,13 +6,13 @@ namespace SnakeGame.MonoBehaviours
     public class Field : MonoBehaviour
     {
         [SerializeField] private Vector2 _size;
-        [SerializeField] private Food _foodPrefab;
+        [SerializeField] private TriggerBody _foodPrefab;
 
         private Bounds _bounds;
-        private Food _food;
+        private TriggerBody _food;
         private IBody _snakeHead;
 
-        public Food Food { get { return _food; } }
+        public TriggerBody Food { get { return _food; } }
 
         public void Initialize(IBody snakeHead)
         {
