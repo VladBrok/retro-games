@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using SnakeGame.Input;
 using UnityEngine.SceneManagement;
+using System;
 
 namespace SnakeGame.MonoBehaviours
 {
@@ -17,6 +18,7 @@ namespace SnakeGame.MonoBehaviours
 
         private readonly int _mainSceneIndex = 0;
         private SnakeController _snakeController;
+        private Field _field;
 
         bool startWasCalled = false; // FIXME
 
@@ -55,6 +57,7 @@ namespace SnakeGame.MonoBehaviours
         private void Update()
         {
             _snakeController.UpdateInput();
+            _field.Update();
         }
 
         private Snake CreateSnake(IBody head, IBody body)
@@ -75,9 +78,13 @@ namespace SnakeGame.MonoBehaviours
             return field;
         }
 
-        private Respawner CreateRespawner(IBody food)
+        private Respawner CreateRespawner(TriggerBody food)
         {
-            return new Respawner(food, _gameFieldArea.bounds);
+            Action beforeRespawn = () => StartCoroutine(HideTemporarly(food.gameObject));
+            var respawner = new Respawner(food, _gameFieldArea.bounds, beforeRespawn);
+            food.TriggerEntered += respawner.RespawnTarget;
+            respawner.RespawnTarget();
+            return respawner;
         }
 
         private TriggerBody CreateSnakeBody()
@@ -85,6 +92,13 @@ namespace SnakeGame.MonoBehaviours
             TriggerBody body = Instantiate(_bodyPrefab);
             body.TriggerEntered += GameOver;
             return body;
+        }
+
+        private IEnumerator HideTemporarly(GameObject toHide)
+        {
+            toHide.SetActive(false);
+            yield return new WaitForSeconds(0.1f);
+            toHide.SetActive(true);
         }
 
         private void GameOver()

@@ -10,15 +10,11 @@ namespace SnakeGame
         private readonly Bounds _bounds;
         private Action _beforeRespawn;
 
-        public Respawner(IBody target, Bounds bounds)
+        public Respawner(IBody target, Bounds bounds, Action beforeRespawn)
         {
             _target = target;
             _bounds = bounds;
-        }
-
-        public Action BeforeRespawn
-        {
-            set { _beforeRespawn = value ?? delegate { }; }
+            _beforeRespawn = beforeRespawn;
         }
 
         public void RespawnTarget()
