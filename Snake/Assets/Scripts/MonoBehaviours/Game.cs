@@ -17,6 +17,9 @@ namespace SnakeGame.MonoBehaviours
         [SerializeField] private SpriteRenderer _gameFieldArea;
         [SerializeField] private UI _ui;
 
+        private readonly WaitForSeconds _foodHideTime = new WaitForSeconds(0.1f);
+        private readonly WaitForSeconds _snakeMoveDelay = new WaitForSeconds(0.15f);
+
         private SnakeController _snakeController;
         private Field _field;
         private Respawner _foodRespawner;
@@ -52,7 +55,7 @@ namespace SnakeGame.MonoBehaviours
             for (; ; )
             {
                 _snakeController.MoveSnake();
-                yield return new WaitForSeconds(0.15f);
+                yield return _snakeMoveDelay;
             }
         }
 
@@ -82,7 +85,8 @@ namespace SnakeGame.MonoBehaviours
 
         private Respawner CreateRespawner(TriggerBody food)
         {
-            Action beforeRespawn = () => StartCoroutine(HideTemporarly(food.gameObject));
+            Action beforeRespawn = () => 
+                StartCoroutine(HideTemporarly(food.gameObject, _foodHideTime));
             var respawner = new Respawner(food, _gameFieldArea.bounds, beforeRespawn);
             food.TriggerEntered += respawner.RespawnTarget;
             return respawner;
@@ -95,10 +99,10 @@ namespace SnakeGame.MonoBehaviours
             return body;
         }
 
-        private IEnumerator HideTemporarly(GameObject toHide)
+        private IEnumerator HideTemporarly(GameObject toHide, WaitForSeconds hideTime)
         {
             toHide.SetActive(false);
-            yield return new WaitForSeconds(0.1f);
+            yield return hideTime;
             toHide.SetActive(true);
         }
 
