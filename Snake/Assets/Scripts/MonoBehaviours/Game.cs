@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using SnakeGame.Input;
+using UnityEngine.SceneManagement;
 
 namespace SnakeGame.MonoBehaviours
 {
@@ -9,22 +10,36 @@ namespace SnakeGame.MonoBehaviours
     {
         [SerializeField] private TriggerBody _headPrefab;
         [SerializeField] private TriggerBody _bodyPrefab;
-        [SerializeField] private Field _field;
+        [SerializeField] private TriggerBody _foodPrefab;
+        [SerializeField] private GameField _gameField;
+        [SerializeField] private SpriteRenderer _gameFieldArea;
         [SerializeField] private UI _ui;
 
+        private readonly int _mainSceneIndex = 0;
         private SnakeController _snakeController;
+
+        bool startWasCalled = false; // FIXME
 
         private void Start()
         {
-            TriggerBody snakeHead = Instantiate(_headPrefab);
-            var snake = new Snake(new TriggerBody[] { snakeHead, CreateBody() }, Vector2.up);
-            var input = new KeyboardInput();
-            _snakeController = new SnakeController(snake, input, _field.Food, CreateBody);
+            if (!startWasCalled)
+            {
+                startWasCalled = true;
 
-            _field.Initialize(snakeHead);
-            _field.SnakeLeftField += GameOver;
+                TriggerBody food = Instantiate(_foodPrefab);
+                TriggerBody snakeHead = Instantiate(_headPrefab);
 
-            _ui.Initialize(_field.Food);
+                var snake = new Snake(new TriggerBody[] { snakeHead, CreateBody() }, Vector2.up);
+                var input = new KeyboardInput();
+                _snakeController = new SnakeController(snake, input, food, CreateBody);
+
+                var field = new Field(snakeHead, _gameFieldArea.bounds);
+                field.TargetLeftField += GameOver;
+                var respawner = new Respawner(food, _gameFieldArea.bounds);
+                _gameField.Initialize(field, respawner, food);
+
+                _ui.Initialize(food);
+            }
 
             StartCoroutine(Move());
         }
@@ -52,7 +67,7 @@ namespace SnakeGame.MonoBehaviours
 
         private void GameOver()
         {
-            _ui.GameOver();
+            SceneManager.LoadScene(_mainSceneIndex);
         }
     }
 }

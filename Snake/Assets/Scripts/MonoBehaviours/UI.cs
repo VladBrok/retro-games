@@ -14,11 +14,6 @@ namespace SnakeGame.MonoBehaviours
             food.TriggerEntered += UpdateScore;
         }
 
-        public void GameOver()
-        {
-            Debug.Log("<color=red>GameOver.</color>");
-        }
-
         private void UpdateScore()
         {
             _score++;
