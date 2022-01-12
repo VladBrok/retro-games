@@ -28,25 +28,19 @@ namespace SnakeGame.MonoBehaviours
 
                 TriggerBody food = Instantiate(_foodPrefab);
                 TriggerBody snakeHead = Instantiate(_headPrefab);
+                TriggerBody snakeBody = CreateBody();
 
-                var snake = new Snake(new TriggerBody[] { snakeHead, CreateBody() }, Vector2.up);
-                var input = new KeyboardInput();
-                _snakeController = new SnakeController(snake, input, food, CreateBody);
+                Snake snake = CreateSnake(snakeHead, snakeBody);
+                Field field = CreateField(snakeHead);
+                Respawner respawner = CreateRespawner(food);
 
-                var field = new Field(snakeHead, _gameFieldArea.bounds);
-                field.TargetLeftField += GameOver;
-                var respawner = new Respawner(food, _gameFieldArea.bounds);
                 _gameField.Initialize(field, respawner, food);
-
                 _ui.Initialize(food);
+
+                _snakeController = CreateSnakeController(snake, food);
             }
 
             StartCoroutine(Move());
-        }
-
-        private void Update()
-        {
-            _snakeController.UpdateInput();
         }
 
         private IEnumerator Move()
@@ -56,6 +50,34 @@ namespace SnakeGame.MonoBehaviours
                 _snakeController.UpdateMovement();
                 yield return new WaitForSeconds(0.15f);
             }
+        }
+
+        private void Update()
+        {
+            _snakeController.UpdateInput();
+        }
+
+        private Snake CreateSnake(IBody head, IBody body)
+        {
+            return new Snake(new IBody[] { head, body }, Vector2.up);
+        }
+
+        private SnakeController CreateSnakeController(Snake snake, ITrigger food)
+        {
+            var input = new KeyboardInput();
+            return new SnakeController(snake, input, food, CreateBody);
+        }
+
+        private Field CreateField(IBody snakeHead)
+        {
+            var field = new Field(snakeHead, _gameFieldArea.bounds);
+            field.TargetLeftField += GameOver;
+            return field;
+        }
+
+        private Respawner CreateRespawner(IBody food)
+        {
+            return new Respawner(food, _gameFieldArea.bounds);
         }
 
         private TriggerBody CreateBody()
