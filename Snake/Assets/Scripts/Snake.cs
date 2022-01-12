@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace SnakeGame
 {
-    public class Snake
+    public class Snake : ISnake
     {
         public static readonly int MinBodyCount = 2;
 

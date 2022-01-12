@@ -35,7 +35,7 @@ namespace SnakeGame.MonoBehaviours
             TriggerBody food = Instantiate(_foodPrefab);
             TriggerBody snakeHead = Instantiate(_headPrefab);
             TriggerBody snakeBody = CreateSnakeBody();
-            Snake snake = CreateSnake(snakeHead, snakeBody);
+            ISnake snake = CreateSnake(snakeHead, snakeBody);
 
             _snakeController = CreateSnakeController(snake, food);
             _foodRespawner = CreateRespawner(food);
@@ -70,7 +70,7 @@ namespace SnakeGame.MonoBehaviours
             return new Snake(new IBody[] { head, body }, Vector2.up);
         }
 
-        private SnakeController CreateSnakeController(Snake snake, ITrigger food)
+        private SnakeController CreateSnakeController(ISnake snake, ITrigger food)
         {
             var input = new KeyboardInput();
             return new SnakeController(snake, input, food, CreateSnakeBody);

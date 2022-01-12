@@ -6,11 +6,11 @@ namespace SnakeGame
 {
     public class SnakeController
     {
-        private readonly Snake _snake;
+        private readonly ISnake _snake;
         private readonly IInputProvider _input;
         private Vector2 _movementDirection;
 
-        public SnakeController(Snake snake, 
+        public SnakeController(ISnake snake, 
                                IInputProvider input, 
                                ITrigger food, 
                                Func<IBody> createBody)
