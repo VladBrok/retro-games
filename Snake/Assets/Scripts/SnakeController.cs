@@ -17,7 +17,7 @@ namespace SnakeGame
         {
             _snake = snake;
             _input = input;
-            food.TriggerEntered += () => _snake.AddBody(createBody());
+            food.TriggerEntered += () => { for (int i = 0; i < 20; i++) _snake.AddBody(createBody()); };
 
             _movementDirection = snake.MovementDirection;
         }

@@ -37,8 +37,8 @@ namespace SnakeGame
 
             tip.Position = head.Position;
             head.Position = head.Position + new Vector2(
-                head.Size.x * _movementDirection.x,
-                head.Size.y * _movementDirection.y);
+                head.Size.x * Math.Sign(_movementDirection.x),
+                head.Size.y * Math.Sign(_movementDirection.y));
 
             _bodies.AddFirst(tip);
             _bodies.AddFirst(head);
