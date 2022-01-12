@@ -59,5 +59,31 @@ namespace Editor
 
             Assert.AreEqual(initDirection, snake.MovementDirection);
         }
+
+        [Test]
+        public void ChangeMovementDirection_ValidHorizontalDirection_UsesSignOfDirection(
+            [Values(2f, 0.5f, -2f, -0.5f)] float x)
+        {
+            var direction = new Vector2(x, 0f);
+            var expected = new Vector2(Math.Sign(direction.x), Math.Sign(direction.y));
+            var snake = new Snake(new IBody[Snake.MinBodyCount], Vector2.up);
+
+            snake.ChangeMovementDirection(direction);
+
+            Assert.AreEqual(expected, snake.MovementDirection);
+        }
+
+        [Test]
+        public void ChangeMovementDirection_ValidVerticalDirection_UsesSignOfDirection(
+            [Values(2f, 0.5f, -2f, -0.5f)] float y)
+        {
+            var direction = new Vector2(0f, y);
+            var expected = new Vector2(Math.Sign(direction.x), Math.Sign(direction.y));
+            var snake = new Snake(new IBody[Snake.MinBodyCount], Vector2.left);
+
+            snake.ChangeMovementDirection(direction);
+
+            Assert.AreEqual(expected, snake.MovementDirection);
+        }
     }
 }
