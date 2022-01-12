@@ -20,7 +20,7 @@ namespace SnakeGame.MonoBehaviours
             get { return _size; } 
         }
 
-        public void OnTriggerEnter2D(Collider2D other)
+        private void OnTriggerEnter2D(Collider2D other)
         {
             TriggerEntered();
         }

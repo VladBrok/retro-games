@@ -28,7 +28,7 @@ namespace SnakeGame.MonoBehaviours
 
                 TriggerBody food = Instantiate(_foodPrefab);
                 TriggerBody snakeHead = Instantiate(_headPrefab);
-                TriggerBody snakeBody = CreateBody();
+                TriggerBody snakeBody = CreateSnakeBody();
 
                 Snake snake = CreateSnake(snakeHead, snakeBody);
                 Field field = CreateField(snakeHead);
@@ -65,7 +65,7 @@ namespace SnakeGame.MonoBehaviours
         private SnakeController CreateSnakeController(Snake snake, ITrigger food)
         {
             var input = new KeyboardInput();
-            return new SnakeController(snake, input, food, CreateBody);
+            return new SnakeController(snake, input, food, CreateSnakeBody);
         }
 
         private Field CreateField(IBody snakeHead)
@@ -80,7 +80,7 @@ namespace SnakeGame.MonoBehaviours
             return new Respawner(food, _gameFieldArea.bounds);
         }
 
-        private TriggerBody CreateBody()
+        private TriggerBody CreateSnakeBody()
         {
             TriggerBody body = Instantiate(_bodyPrefab);
             body.TriggerEntered += GameOver;
