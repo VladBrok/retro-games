@@ -22,13 +22,13 @@ namespace SnakeGame
             _movementDirection = snake.MovementDirection;
         }
 
-        public void UpdateMovement()
+        public void MoveSnake()
         {
             _snake.ChangeMovementDirection(_movementDirection);
             _snake.Move();
         }
 
-        public void UpdateInput()
+        public void Update()
         {
             float horizontal = _input.Horizontal;
             float vertical = _input.Vertical;

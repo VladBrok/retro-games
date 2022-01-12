@@ -9,39 +9,41 @@ namespace SnakeGame.MonoBehaviours
 {
     public class Game : MonoBehaviour
     {
+        private static readonly int MainSceneIndex = 0;
+
         [SerializeField] private TriggerBody _headPrefab;
         [SerializeField] private TriggerBody _bodyPrefab;
         [SerializeField] private TriggerBody _foodPrefab;
-        [SerializeField] private GameField _gameField;
         [SerializeField] private SpriteRenderer _gameFieldArea;
         [SerializeField] private UI _ui;
 
-        private readonly int _mainSceneIndex = 0;
         private SnakeController _snakeController;
         private Field _field;
-
-        bool startWasCalled = false; // FIXME
+        private Respawner _foodRespawner;
 
         private void Start()
         {
-            if (!startWasCalled)
-            {
-                startWasCalled = true;
+            Initialize();
+            BeginGame();
+        }
 
-                TriggerBody food = Instantiate(_foodPrefab);
-                TriggerBody snakeHead = Instantiate(_headPrefab);
-                TriggerBody snakeBody = CreateSnakeBody();
+        private void Initialize()
+        {
+            TriggerBody food = Instantiate(_foodPrefab);
+            TriggerBody snakeHead = Instantiate(_headPrefab);
+            TriggerBody snakeBody = CreateSnakeBody();
+            Snake snake = CreateSnake(snakeHead, snakeBody);
 
-                Snake snake = CreateSnake(snakeHead, snakeBody);
-                Field field = CreateField(snakeHead);
-                Respawner respawner = CreateRespawner(food);
+            _snakeController = CreateSnakeController(snake, food);
+            _foodRespawner = CreateRespawner(food);
+            _field = CreateField(snakeHead);
 
-                _gameField.Initialize(field, respawner, food);
-                _ui.Initialize(food);
+            _ui.Initialize(food);
+        }
 
-                _snakeController = CreateSnakeController(snake, food);
-            }
-
+        private void BeginGame()
+        {
+            _foodRespawner.RespawnTarget();
             StartCoroutine(Move());
         }
 
@@ -49,14 +51,14 @@ namespace SnakeGame.MonoBehaviours
         {
             for (; ; )
             {
-                _snakeController.UpdateMovement();
+                _snakeController.MoveSnake();
                 yield return new WaitForSeconds(0.15f);
             }
         }
 
         private void Update()
         {
-            _snakeController.UpdateInput();
+            _snakeController.Update();
             _field.Update();
         }
 
@@ -83,7 +85,6 @@ namespace SnakeGame.MonoBehaviours
             Action beforeRespawn = () => StartCoroutine(HideTemporarly(food.gameObject));
             var respawner = new Respawner(food, _gameFieldArea.bounds, beforeRespawn);
             food.TriggerEntered += respawner.RespawnTarget;
-            respawner.RespawnTarget();
             return respawner;
         }
 
@@ -103,7 +104,7 @@ namespace SnakeGame.MonoBehaviours
 
         private void GameOver()
         {
-            SceneManager.LoadScene(_mainSceneIndex);
+            SceneManager.LoadScene(MainSceneIndex);
         }
     }
 }
