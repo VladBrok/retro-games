@@ -5,6 +5,8 @@ namespace SnakeGame
     public interface ISnake
     {
         Vector2 MovementDirection { get; }
+        IBody Head { get; }
+        IBody Tip { get; }
 
         void Move();
         void ChangeMovementDirection(Vector2 newDirection);

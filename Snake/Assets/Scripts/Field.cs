@@ -26,11 +26,11 @@ namespace SnakeGame
 
         private bool IsTargetOnField()
         {
-            float offset = 0.5f;
-            var snakePos = new Vector2(
-                _target.Position.x + offset,
-                _target.Position.y - offset);
-            return _bounds.Contains(snakePos);
+            Vector2 offset = _target.Size / 2;
+            var targetPos = new Vector2(
+                _target.Position.x + offset.x,
+                _target.Position.y - offset.y);
+            return _bounds.Contains(targetPos);
         }
     }
 }

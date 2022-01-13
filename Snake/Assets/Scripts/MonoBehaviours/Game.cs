@@ -19,7 +19,7 @@ namespace SnakeGame.MonoBehaviours
         [SerializeField] private UI _ui;
 
         private readonly WaitForSeconds _foodHideTime = new WaitForSeconds(0.1f);
-        private readonly WaitForSeconds _snakeMoveDelay = new WaitForSeconds(0.8f);
+        private readonly WaitForSeconds _snakeMoveDelay = new WaitForSeconds(0.15f);
         private readonly Vector2 _initialMovementDirection = Vector2.up;
 
         private SnakeController _snakeController;

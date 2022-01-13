@@ -27,6 +27,14 @@ namespace SnakeGame
         { 
             get { return _movementDirection; } 
         }
+        public IBody Head
+        {
+            get { return _bodies.First.Value; }
+        }
+        public IBody Tip
+        {
+            get { return _bodies.Last.Value; }
+        }
 
         public void Move()
         {
