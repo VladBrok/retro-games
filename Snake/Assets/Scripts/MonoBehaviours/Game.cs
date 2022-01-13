@@ -23,6 +23,7 @@ namespace SnakeGame.MonoBehaviours
         private readonly Vector2 _initialMovementDirection = Vector2.up;
 
         private SnakeController _snakeController;
+        private FieldPositionsController _positionsController;
         private Field _field;
         private Respawner _foodRespawner;
 
@@ -39,8 +40,9 @@ namespace SnakeGame.MonoBehaviours
             TriggerBody snakeBody = CreateSnakeBody();
             ISnake snake = CreateSnake(snakeHead, snakeBody);
 
+            _positionsController = CreatePositionsController(snake);
             _snakeController = CreateSnakeController(snake, food);
-            _foodRespawner = CreateRespawner(food);
+            _foodRespawner = CreateRespawner(snake, food);
             _field = CreateField(snakeHead);
 
             _ui.Initialize(food);
@@ -64,6 +66,7 @@ namespace SnakeGame.MonoBehaviours
         private void Update()
         {
             _snakeController.Update();
+            _positionsController.Update();
             _field.Update();
         }
 
@@ -73,9 +76,6 @@ namespace SnakeGame.MonoBehaviours
             head.Position = _spawnPoint.position + new Vector3(
                 head.Size.x * _initialMovementDirection.x,
                 head.Size.y * _initialMovementDirection.y);
-
-            Debug.Log(head.Size);
-
             return head;
         }
 
@@ -91,6 +91,13 @@ namespace SnakeGame.MonoBehaviours
             return new Snake(new IBody[] { head, body }, _initialMovementDirection);
         }
 
+        private FieldPositionsController CreatePositionsController(ISnake snake)
+        {
+            var controller = new FieldPositionsController(snake, _gameFieldArea.bounds);
+            controller.AllPositionsOccupied += Victory;
+            return controller;
+        }
+
         private SnakeController CreateSnakeController(ISnake snake, ITrigger food)
         {
             var input = new KeyboardInput();
@@ -104,11 +111,11 @@ namespace SnakeGame.MonoBehaviours
             return field;
         }
 
-        private Respawner CreateRespawner(TriggerBody food)
+        private Respawner CreateRespawner(ISnake snake, TriggerBody food)
         {
             Action beforeRespawn = () => 
                 StartCoroutine(HideTemporarly(food.gameObject, _foodHideTime));
-            var respawner = new Respawner(food, _gameFieldArea.bounds, beforeRespawn);
+            var respawner = new Respawner(food, _positionsController, beforeRespawn);
             food.TriggerEntered += respawner.RespawnTarget;
             return respawner;
         }
@@ -122,7 +129,13 @@ namespace SnakeGame.MonoBehaviours
 
         private void GameOver()
         {
-            SceneManager.LoadScene(MainSceneIndex);
+            Debug.Log("<color=red>Game over.</color>");
+        }
+
+        private void Victory()
+        {
+            Debug.Log("<color=green>VICTORY!</color>");
+            Time.timeScale = 0f;
         }
     }
 }
