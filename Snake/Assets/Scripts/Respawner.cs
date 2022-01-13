@@ -25,10 +25,10 @@ namespace SnakeGame
 
         private Vector2 GetRandomPosition()
         {
-            float offset = 1f;
+            Vector2 offset = _target.Size;
             return new Vector2(
-                Mathf.Floor(Random.Range(_bounds.min.x, _bounds.max.x - offset)),
-                Mathf.Floor(Random.Range(_bounds.min.y + offset, _bounds.max.y)));
+                Mathf.Floor(Random.Range(_bounds.min.x, _bounds.max.x - offset.x)),
+                Mathf.Floor(Random.Range(_bounds.min.y + offset.y, _bounds.max.y)));
         }
     }
 }

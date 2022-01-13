@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 340100b95707098409e3eb579d97a02c
-timeCreated: 1641898966
+timeCreated: 1642081544
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -74,10 +74,10 @@ TextureImporter:
       name: apple_0
       rect:
         serializedVersion: 2
-        x: 36
+        x: 0
         y: 0
-        width: 737
-        height: 781
+        width: 800
+        height: 800
       alignment: 9
       pivot: {x: 0.000094823954, y: 0.9990549}
       border: {x: 0, y: 0, z: 0, w: 0}

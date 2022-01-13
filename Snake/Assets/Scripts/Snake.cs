@@ -36,7 +36,7 @@ namespace SnakeGame
             _bodies.RemoveLast();
 
             tip.Position = head.Position;
-            head.Position = head.Position + new Vector2(
+            head.Position += new Vector2(
                 head.Size.x * _movementDirection.x,
                 head.Size.y * _movementDirection.y);
 

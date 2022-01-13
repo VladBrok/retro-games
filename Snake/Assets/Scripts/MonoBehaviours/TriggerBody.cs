@@ -6,8 +6,6 @@ namespace SnakeGame.MonoBehaviours
     [RequireComponent(typeof(Collider2D))]
     public class TriggerBody : MonoBehaviour, IBody, ITrigger
     {
-        private Vector2 _size;
-
         public event Action TriggerEntered = delegate { };
 
         public Vector2 Position
@@ -17,7 +15,7 @@ namespace SnakeGame.MonoBehaviours
         }
         public Vector2 Size 
         { 
-            get { return _size; } 
+            get { return Vector2.one; } 
         }
 
         private void OnTriggerEnter2D(Collider2D other)
@@ -27,12 +25,9 @@ namespace SnakeGame.MonoBehaviours
 
         protected virtual void Awake()
         {
-            var collider = GetComponent<Collider2D>();
-            _size = collider.bounds.size;
-
             Debug.Assert(
-                collider.isTrigger,
-                "Collider2D of the " + gameObject.name + " should be a trigger");
+                GetComponent<Collider2D>().isTrigger,
+                "Collider2D of the " + gameObject.name + " should be a trigger.");
         }
     }
 }
