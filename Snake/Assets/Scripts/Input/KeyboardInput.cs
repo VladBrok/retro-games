@@ -5,18 +5,12 @@ namespace SnakeGame.Input
     {
         public float Horizontal
         {
-            get 
-            {
-                return UnityEngine.Input.GetAxisRaw("Horizontal"); 
-            }
+            get { return UnityEngine.Input.GetAxisRaw("Horizontal"); }
         }
 
         public float Vertical
         {
-            get 
-            {
-                return UnityEngine.Input.GetAxisRaw("Vertical"); 
-            }
+            get { return UnityEngine.Input.GetAxisRaw("Vertical"); }
         }
     }
 }
