@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -7,13 +8,15 @@ namespace SnakeGame
     public class Respawner
     {
         private readonly IBody _target;
-        private readonly Bounds _bounds;
+        private readonly IEmptyPositionsProvider _helper;
         private Action _beforeRespawn;
 
-        public Respawner(IBody target, Bounds bounds, Action beforeRespawn)
+        public Respawner(IBody target, 
+                         IEmptyPositionsProvider positionsProvider, 
+                         Action beforeRespawn)
         {
             _target = target;
-            _bounds = bounds;
+            _helper = positionsProvider;
             _beforeRespawn = beforeRespawn;
         }
 
@@ -25,10 +28,8 @@ namespace SnakeGame
 
         private Vector2 GetRandomPosition()
         {
-            Vector2 offset = _target.Size;
-            return new Vector2(
-                Mathf.Floor(Random.Range(_bounds.min.x, _bounds.max.x - offset.x)),
-                Mathf.Floor(Random.Range(_bounds.min.y + offset.y, _bounds.max.y)));
+            int randIndex = Random.Range(0, _helper.EmptyPositions.Count());
+            return _helper.EmptyPositions.ElementAt(randIndex);
         }
     }
 }
