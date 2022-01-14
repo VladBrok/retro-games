@@ -57,14 +57,17 @@ namespace SnakeGame.Editor.Tests.Controllers
 
         private ISnake CreateDefaultSnake(Bounds fieldArea)
         {
+            var defaultPosition = new Vector2(fieldArea.min.x, fieldArea.max.y);
             var snake = Substitute.For<ISnake>();
-            snake.Head.Position.Returns(new Vector2(fieldArea.min.x, fieldArea.max.y));
+            snake.Head.Position.Returns(defaultPosition);
+            snake.Tip.Position.Returns(defaultPosition);
             return snake;
         }
 
         private void MoveRight(ISnake snake)
         {
             snake.Head.Position.Returns(snake.Head.Position + Vector2.right);
+            snake.Tip.Position.Returns(snake.Tip.Position + Vector2.right);
         }
     }
 }
