@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using SnakeGame.Snakes;
 
-namespace SnakeGame
+namespace SnakeGame.Controllers
 {
     public class FieldPositionsController : IEmptyPositionsProvider
     {
@@ -28,6 +29,12 @@ namespace SnakeGame
 
         public void Update()
         {
+            if (!_emptyPositions.Any())
+            {
+                AllPositionsOccupied();
+                return;
+            }
+
             bool snakeMoved = _previousHeadPosition != _snake.Head.Position;
             if (snakeMoved)
             {
@@ -37,17 +44,11 @@ namespace SnakeGame
 
         private void AdjustEmptyPositions()
         {
-            if (!_emptyPositions.Any())
-            {
-                AllPositionsOccupied();
-                return;
-            }
-
-            Debug.Assert(_emptyPositions.Remove(_snake.Head.Position), _snake.Head.Position);
+            _emptyPositions.Remove(_snake.Head.Position);
             bool tipMoved = _previousTipPosition != _snake.Tip.Position;
             if (tipMoved)
             {
-                Debug.Assert(_emptyPositions.Add(_previousTipPosition), _previousTipPosition);
+                _emptyPositions.Add(_previousTipPosition);
             }
             AdjustPreviousHeadTipPositions();
         }
@@ -55,7 +56,6 @@ namespace SnakeGame
         private void InitializeEmptyPositions(Bounds fieldArea)
         {
             // TODO: Introduce a GridSize instead of offsets and "x++ / y++".
-
             _emptyPositions = new HashSet<Vector2>();
             float yMin = Mathf.Round(fieldArea.min.y) + 1f;
             float yMax = Mathf.Round(fieldArea.max.y);
@@ -69,8 +69,9 @@ namespace SnakeGame
                     _emptyPositions.Add(new Vector2(x, y));
                 }
             }
-            Debug.Assert(_emptyPositions.Remove(_snake.Head.Position), _snake.Head.Position);
-            Debug.Assert(_emptyPositions.Remove(_snake.Tip.Position), _snake.Tip.Position);
+
+            _emptyPositions.Remove(_snake.Head.Position);
+            _emptyPositions.Remove(_snake.Tip.Position);
         }
 
         private void AdjustPreviousHeadTipPositions()

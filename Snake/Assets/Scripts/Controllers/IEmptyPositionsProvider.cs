@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace SnakeGame
+namespace SnakeGame.Controllers
 {
     public interface IEmptyPositionsProvider
     {

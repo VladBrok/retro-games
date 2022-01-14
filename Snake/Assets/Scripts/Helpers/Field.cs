@@ -1,17 +1,17 @@
 ﻿using System;
 using UnityEngine;
 
-namespace SnakeGame
+namespace SnakeGame.Helpers
 {
     public class Field
     {
         private readonly IBody _target;
-        private readonly Bounds _bounds;
+        private readonly Bounds _area;
 
-        public Field(IBody target, Bounds bounds)
+        public Field(IBody target, Bounds area)
         {
             _target = target;
-            _bounds = bounds;
+            _area = area;
         }
 
         public event Action TargetLeftField = delegate { };
@@ -30,7 +30,7 @@ namespace SnakeGame
             var targetPos = new Vector2(
                 _target.Position.x + offset.x,
                 _target.Position.y - offset.y);
-            return _bounds.Contains(targetPos);
+            return _area.Contains(targetPos);
         }
     }
 }

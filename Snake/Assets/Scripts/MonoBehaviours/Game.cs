@@ -4,6 +4,9 @@ using UnityEngine;
 using SnakeGame.Input;
 using UnityEngine.SceneManagement;
 using System;
+using SnakeGame.Snakes;
+using SnakeGame.Helpers;
+using SnakeGame.Controllers;
 
 namespace SnakeGame.MonoBehaviours
 {

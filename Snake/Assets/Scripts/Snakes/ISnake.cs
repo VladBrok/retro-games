@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace SnakeGame
+namespace SnakeGame.Snakes
 {
     public interface ISnake
     {

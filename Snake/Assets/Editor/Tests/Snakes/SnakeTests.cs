@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEditor;
-using UnityEngine.TestTools;
 using NUnit.Framework;
-using NSubstitute;
-using SnakeGame;
+using UnityEngine;
+using SnakeGame.Snakes;
 
-namespace Editor
+namespace SnakeGame.Editor.Tests.Snakes
 {
     public class SnakeTests
     {

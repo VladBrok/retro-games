@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace SnakeGame
+namespace SnakeGame.Snakes
 {
     public class Snake : ISnake
     {

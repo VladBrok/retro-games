@@ -2,8 +2,9 @@
 using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
+using SnakeGame.Controllers;
 
-namespace SnakeGame
+namespace SnakeGame.Helpers
 {
     public class Respawner
     {
@@ -28,6 +29,11 @@ namespace SnakeGame
 
         private Vector2 GetRandomPosition()
         {
+            if (!_helper.EmptyPositions.Any())
+            {
+                return new Vector2();
+            }
+
             int randIndex = Random.Range(0, _helper.EmptyPositions.Count());
             return _helper.EmptyPositions.ElementAt(randIndex);
         }
