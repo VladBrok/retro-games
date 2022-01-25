@@ -2,7 +2,7 @@
 
 namespace Asteroids
 {
-    public interface ILifeTracker
+    public interface ILifeController
     {
         event Action Dead;
         event Action LostLife;

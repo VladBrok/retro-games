@@ -3,14 +3,14 @@ using UnityEngine;
 
 namespace Asteroids
 {
-    public class AsteroidTracker<T> where T : IDestructible
+    public class AsteroidController<T> where T : IDestructible
     {
         private readonly ISpawner<T> _spawner;
         private readonly ICenterProvider _spawnOrigin;
         private int _bigAsteroidCount;
         private int _asteroidsLeft;
 
-        public AsteroidTracker(
+        public AsteroidController(
             ISpawner<T> spawner, 
             ICenterProvider spawnOrigin, 
             int bigAsteroidCount)

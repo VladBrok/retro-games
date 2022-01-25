@@ -9,12 +9,12 @@ using Random = UnityEngine.Random;
 
 namespace Asteroids
 {
-    public class EnemyTracker<T> where T : IDestructible
+    public class EnemyController<T> where T : IDestructible
     {
         private readonly ISpawner<T> _spawner;
         private readonly Bounds _viewArea;
 
-        public EnemyTracker(
+        public EnemyController(
             ISpawner<T> spawner,
             ICoroutineStarter coroutineStarter,
             Bounds viewArea,

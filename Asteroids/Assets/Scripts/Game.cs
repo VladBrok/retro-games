@@ -17,26 +17,67 @@ namespace Asteroids
         [SerializeField] private PlayerShip _playerPrefab;
         [SerializeField] private EnemyShip _enemyPrefab;
 
-        private GameController _controller;
+        private GameController _gameController;
+        private Bounds _cameraView;
 
         private void Awake()
         {
-            _controller = new GameController(_gameConfig, _ui, _impactParticle);
-            Bounds cameraView = Camera.main.GetViewBounds2D();
+            _gameController = new GameController(_gameConfig, _ui, _impactParticle);
+            _cameraView = Camera.main.GetViewBounds2D();
 
             Transform shipContainer, projectileContainer, asteroidContainer;
-            CreateObjectsHierarchy(out asteroidContainer, out shipContainer, out projectileContainer);
+            CreateObjectsHierarchy(
+                out asteroidContainer, 
+                out shipContainer, 
+                out projectileContainer);
 
-            PlayerShip player = Instantiate(_playerPrefab, shipContainer);
-            player.Initialize(
-                new Wraparound<PlayerShip>(player, cameraView), 
-                cameraView, 
-                projectileContainer);
+            var player = CreatePlayer(shipContainer, projectileContainer);
+            var asteroidSpawner = CreateAsteroidSpawner(asteroidContainer);
+            var enemySpawner = CreateEnemySpawner(shipContainer, projectileContainer);
 
-            var playerLifeTracker = new LifeTracker(player, _gameConfig.PlayerLives);
-            playerLifeTracker.Dead += () => StartCoroutine(_controller.PauseRoutine());
+            CreateAsteroidController(player, asteroidSpawner);
+            CreateEnemyController(enemySpawner);
+            var playerLifeController = CreatePlayerLifeController(player);
 
-            Vector2 viewExtents = cameraView.extents;
+            _ui.Initialize(playerLifeController);
+            _ui.RestartButtonClicked.AddListener(_gameController.Restart);
+        }
+
+        private void CreateEnemyController(EnemySpawner enemySpawner)
+        {
+            new EnemyController<EnemyShip>(
+                enemySpawner, this, _cameraView, new Value(5, 30));
+        }
+
+        private EnemySpawner CreateEnemySpawner(
+            Transform shipContainer, 
+            Transform projectileContainer)
+        {
+            var enemySpawner = new EnemySpawner(
+                _enemyPrefab, shipContainer, projectileContainer, _cameraView, Camera.main);
+            enemySpawner.Destroyed += e => _gameController.HandleDestroyOf(e, 50);
+            return enemySpawner;
+        }
+
+        private void CreateAsteroidController(PlayerShip player, AsteroidSpawner asteroidSpawner)
+        {
+            new AsteroidController<Asteroid>(
+                asteroidSpawner, player, _gameConfig.InitialBigAsteroidCount);
+        }
+
+        private AsteroidSpawner CreateAsteroidSpawner(Transform asteroidContainer)
+        {
+            InitializeAsteroidConfigs();
+
+            var asteroidSpawner = new AsteroidSpawner(
+                _asteroidConfigs, asteroidContainer, _cameraView);
+            asteroidSpawner.Destroyed += a => _gameController.HandleDestroyOf(a, a.Config.Score);
+            return asteroidSpawner;
+        }
+
+        private void InitializeAsteroidConfigs()
+        {
+            Vector2 viewExtents = _cameraView.extents;
             foreach (AsteroidConfig config in _asteroidConfigs)
             {
                 var spawnOffsetX = new Value(
@@ -47,22 +88,23 @@ namespace Asteroids
                     viewExtents.y.Percentage(config.SpawnOffsetPercent.Max));
                 config.Initialize(spawnOffsetX, spawnOffsetY);
             }
-            var asteroidSpawner = new AsteroidSpawner(
-                _asteroidConfigs, asteroidContainer, cameraView);
-            asteroidSpawner.Destroyed += a => _controller.HandleDestroyOf(a, a.Config.Score);
+        }
 
-            new AsteroidTracker<Asteroid>(
-                asteroidSpawner, player, _gameConfig.InitialBigAsteroidCount);
+        private LifeController CreatePlayerLifeController(PlayerShip player)
+        {
+            var playerLifeController = new LifeController(player, _gameConfig.PlayerLives);
+            playerLifeController.Dead += () => StartCoroutine(_gameController.PauseRoutine());
+            return playerLifeController;
+        }
 
-            var enemySpawner = new EnemySpawner(
-                _enemyPrefab, shipContainer, projectileContainer, cameraView, Camera.main);
-            enemySpawner.Destroyed += e => _controller.HandleDestroyOf(e, 50);
-
-            new EnemyTracker<EnemyShip>(
-                enemySpawner, this, cameraView, new Value(5, 30));
-
-            _ui.Initialize(playerLifeTracker);
-            _ui.RestartButtonClicked.AddListener(_controller.Restart);
+        private PlayerShip CreatePlayer(Transform shipContainer, Transform projectileContainer)
+        {
+            PlayerShip player = Instantiate(_playerPrefab, shipContainer);
+            player.Initialize(
+                new Wraparound<PlayerShip>(player, _cameraView),
+                _cameraView,
+                projectileContainer);
+            return player;
         }
 
         private void CreateObjectsHierarchy(
@@ -79,7 +121,7 @@ namespace Asteroids
 
         private void OnApplicationFocus(bool hasFocus)
         {
-            _controller.HandleApplicationFocus(hasFocus);
+            _gameController.HandleApplicationFocus(hasFocus);
         }
 
         private void OnValidate()

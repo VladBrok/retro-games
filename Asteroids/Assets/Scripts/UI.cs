@@ -16,7 +16,7 @@ namespace Asteroids
         [SerializeField] private Text _gameOverText;
         [SerializeField] private Button _restartButton;
 
-        private ILifeTracker _player;
+        private ILifeController _player;
         private Stack<Image> _lives;
 
         public Button.ButtonClickedEvent RestartButtonClicked
@@ -24,7 +24,7 @@ namespace Asteroids
             get { return _restartButton.onClick; }
         }
 
-        public void Initialize(ILifeTracker player)
+        public void Initialize(ILifeController player)
         {
             _player = player;
             _player.LostLife += OnPlayerLostLife;

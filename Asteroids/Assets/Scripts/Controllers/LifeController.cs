@@ -2,12 +2,12 @@
 
 namespace Asteroids
 {
-    public class LifeTracker : ILifeTracker
+    public class LifeController : ILifeController
     {
         private readonly IDestructible _target;
         private int _currentLives;
 
-        public LifeTracker(IDestructible target, int maxLives)
+        public LifeController(IDestructible target, int maxLives)
         {
             if (maxLives < 1) throw new ArgumentOutOfRangeException("maxLives");
 
