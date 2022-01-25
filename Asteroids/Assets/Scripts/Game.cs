@@ -13,13 +13,11 @@ namespace Asteroids
         private readonly int _mainSceneIndex = 0;
         
         [SerializeField] private UI _ui;
-        [SerializeField] private ParticleSystem _impactParticle;
+        [SerializeField] private GameConfig _gameConfig;
         [SerializeField] private AsteroidConfig[] _asteroidConfigs;
+        [SerializeField] private ParticleSystem _impactParticle;
         [SerializeField] private PlayerShip _playerPrefab;
         [SerializeField] private EnemyShip _enemyPrefab;
-        [SerializeField] private int _playerLives;
-        [SerializeField] private float _pauseDelayInSeconds;
-        [SerializeField] private int _initialBigAsteroidCount;
 
         private WaitForSeconds _waitForPauseDelay;
         private ISaveSystem _saveSystem;
@@ -32,7 +30,7 @@ namespace Asteroids
             _data = _saveSystem.Load();
 
             Bounds cameraView = Camera.main.GetViewBounds2D();
-            _waitForPauseDelay = new WaitForSeconds(_pauseDelayInSeconds);
+            _waitForPauseDelay = new WaitForSeconds(_gameConfig.PauseDelayInSeconds);
 
             Transform shipContainer, projectileContainer, asteroidContainer;
             CreateObjectsHierarchy(out asteroidContainer, out shipContainer, out projectileContainer);
@@ -43,7 +41,7 @@ namespace Asteroids
                 cameraView, 
                 projectileContainer);
 
-            var playerLifeTracker = new LifeTracker(player, _playerLives);
+            var playerLifeTracker = new LifeTracker(player, _gameConfig.PlayerLives);
             playerLifeTracker.Dead += () => StartCoroutine(Pause());
 
             Vector2 viewExtents = cameraView.extents;
@@ -62,11 +60,11 @@ namespace Asteroids
             asteroidSpawner.Destroyed += a => OnDestroyed(a, a.Config.Score);
 
             new AsteroidTracker<Asteroid>(
-                asteroidSpawner, player, _initialBigAsteroidCount);
+                asteroidSpawner, player, _gameConfig.InitialBigAsteroidCount);
 
             var enemySpawner = new EnemySpawner(
                 _enemyPrefab, shipContainer, projectileContainer, cameraView, Camera.main);
-            enemySpawner.Destroyed += _ => OnDestroyed(_, 50);
+            enemySpawner.Destroyed += e => OnDestroyed(e, 50);
 
             new EnemyTracker<EnemyShip>(
                 enemySpawner, this, cameraView, new Value(5, 30));
