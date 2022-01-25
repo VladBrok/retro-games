@@ -17,7 +17,6 @@ namespace Asteroids
             var input = new AiInput();
             var weapon = GetComponent<ShipWeapon>();
             weapon.Initialize(
-                viewArea, 
                 input, 
                 projectileContainer,
                 p => new NoWraparound<Projectile>(p, viewArea),

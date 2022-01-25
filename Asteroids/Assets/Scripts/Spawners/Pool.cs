@@ -4,7 +4,8 @@ using UnityEngine;
 
 namespace Asteroids
 {
-    public class Pool<T> where T : Destructible<T>
+    public class Pool<T> : IPool<T> 
+        where T : Destructible<T>
     {
         private readonly T _prefab;
         private readonly Transform _spawnPoint;

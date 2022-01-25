@@ -8,7 +8,6 @@ namespace Asteroids
         private readonly ISpawner<T> _spawner;
         private readonly ICenterProvider _spawnOrigin;
         private int _bigAsteroidCount;
-        private int _asteroidsLeft;
 
         public AsteroidController(
             ISpawner<T> spawner, 
@@ -20,18 +19,20 @@ namespace Asteroids
             _spawner = spawner;
             _spawnOrigin = spawnOrigin;
             _bigAsteroidCount = bigAsteroidCount;
-            _asteroidsLeft = GetAsteroidsToDestroy();
+            AsteroidsLeft = GetAsteroidsToDestroy();
 
             _spawner.Destroyed += OnAsteroidDestroyed;
             _spawner.Spawn(_bigAsteroidCount, _spawnOrigin.Center);
         }
 
+        public int AsteroidsLeft { get; private set; }
+
         private void OnAsteroidDestroyed(T obj)
         {
-            if (--_asteroidsLeft == 0)
+            if (--AsteroidsLeft == 0)
             {
                 _spawner.Spawn(++_bigAsteroidCount, _spawnOrigin.Center);
-                _asteroidsLeft = GetAsteroidsToDestroy();
+                AsteroidsLeft = GetAsteroidsToDestroy();
             }
         }
 

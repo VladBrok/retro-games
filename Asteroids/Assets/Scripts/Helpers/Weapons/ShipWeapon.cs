@@ -13,7 +13,6 @@ namespace Asteroids
         public event Action Fired = delegate { };
 
         public void Initialize(
-            Bounds viewArea, 
             IWeaponInput input, 
             Transform projectileContainer,
             Func<Projectile, WraparoundBase<Projectile>> getProjectileWraparound,

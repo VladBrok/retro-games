@@ -2,18 +2,19 @@
 
 namespace Asteroids
 {
-    public class Weapon<T> where T : Destructible<T>
+    public class Weapon<T>
     {
         private readonly IWeaponInput _input;
-        private readonly Pool<T> _projectilePool;
+        private readonly IPool<T> _projectilePool;
         private readonly float _fireRate;
         private float _cooldown;
 
-        public Weapon(IWeaponInput input, Pool<T> projectilePool, float fireRate)
+        public Weapon(IWeaponInput input, IPool<T> projectilePool, float fireRate)
         {
             _input = input;
             _projectilePool = projectilePool;
             _fireRate = fireRate;
+            _cooldown = fireRate;
         }
 
         public event Action Fired = delegate { };
