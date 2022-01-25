@@ -76,7 +76,8 @@
      <Compile Include="Assets\Scripts\Helpers\Respawn\RandomRespawner.cs" />
      <Compile Include="Assets\Scripts\Helpers\Respawn\Respawner.cs" />
      <Compile Include="Assets\Scripts\Helpers\Value.cs" />
-     <Compile Include="Assets\Scripts\Helpers\Weapon.cs" />
+     <Compile Include="Assets\Scripts\Helpers\Weapons\ShipWeapon.cs" />
+     <Compile Include="Assets\Scripts\Helpers\Weapons\Weapon.cs" />
      <Compile Include="Assets\Scripts\Helpers\Wraparound\NoWraparound.cs" />
      <Compile Include="Assets\Scripts\Helpers\Wraparound\Wraparound.cs" />
      <Compile Include="Assets\Scripts\Helpers\Wraparound\WraparoundBase.cs" />
