@@ -66,6 +66,7 @@
      <Compile Include="Assets\Scripts\Extensions\FloatExtensions.cs" />
      <Compile Include="Assets\Scripts\Extensions\VectorExtensions.cs" />
      <Compile Include="Assets\Scripts\Game.cs" />
+     <Compile Include="Assets\Scripts\GameController.cs" />
      <Compile Include="Assets\Scripts\Helpers\Empty.cs" />
      <Compile Include="Assets\Scripts\Helpers\FPSLimiter.cs" />
      <Compile Include="Assets\Scripts\Helpers\Respawn\RandomRespawner.cs" />

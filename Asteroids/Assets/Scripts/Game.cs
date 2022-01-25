@@ -9,9 +9,7 @@ namespace Asteroids
 {
     [DisallowMultipleComponent]
     public sealed class Game : MonoBehaviour, ICoroutineStarter
-    {
-        private readonly int _mainSceneIndex = 0;
-        
+    {        
         [SerializeField] private UI _ui;
         [SerializeField] private GameConfig _gameConfig;
         [SerializeField] private AsteroidConfig[] _asteroidConfigs;
@@ -19,18 +17,12 @@ namespace Asteroids
         [SerializeField] private PlayerShip _playerPrefab;
         [SerializeField] private EnemyShip _enemyPrefab;
 
-        private WaitForSeconds _waitForPauseDelay;
-        private ISaveSystem _saveSystem;
-        private SaveData _data;
-        private int _score;
+        private GameController _controller;
 
         private void Awake()
         {
-            _saveSystem = new JsonSaveSystem("data.txt");
-            _data = _saveSystem.Load();
-
+            _controller = new GameController(_gameConfig, _ui, _impactParticle);
             Bounds cameraView = Camera.main.GetViewBounds2D();
-            _waitForPauseDelay = new WaitForSeconds(_gameConfig.PauseDelayInSeconds);
 
             Transform shipContainer, projectileContainer, asteroidContainer;
             CreateObjectsHierarchy(out asteroidContainer, out shipContainer, out projectileContainer);
@@ -42,7 +34,7 @@ namespace Asteroids
                 projectileContainer);
 
             var playerLifeTracker = new LifeTracker(player, _gameConfig.PlayerLives);
-            playerLifeTracker.Dead += () => StartCoroutine(Pause());
+            playerLifeTracker.Dead += () => StartCoroutine(_controller.PauseRoutine());
 
             Vector2 viewExtents = cameraView.extents;
             foreach (AsteroidConfig config in _asteroidConfigs)
@@ -57,34 +49,20 @@ namespace Asteroids
             }
             var asteroidSpawner = new AsteroidSpawner(
                 _asteroidConfigs, asteroidContainer, cameraView);
-            asteroidSpawner.Destroyed += a => OnDestroyed(a, a.Config.Score);
+            asteroidSpawner.Destroyed += a => _controller.HandleDestroyOf(a, a.Config.Score);
 
             new AsteroidTracker<Asteroid>(
                 asteroidSpawner, player, _gameConfig.InitialBigAsteroidCount);
 
             var enemySpawner = new EnemySpawner(
                 _enemyPrefab, shipContainer, projectileContainer, cameraView, Camera.main);
-            enemySpawner.Destroyed += e => OnDestroyed(e, 50);
+            enemySpawner.Destroyed += e => _controller.HandleDestroyOf(e, 50);
 
             new EnemyTracker<EnemyShip>(
                 enemySpawner, this, cameraView, new Value(5, 30));
 
             _ui.Initialize(playerLifeTracker);
-            _ui.RestartButtonClicked.AddListener(Restart);
-            _ui.UpdateHighScore(_data.HighScore);
-        }
-
-        private IEnumerator Pause()
-        {
-            yield return _waitForPauseDelay;
-            Time.timeScale = 0f;
-        }
-
-        private void Restart()
-        {
-            _saveSystem.Save(_data);
-            SceneManager.LoadSceneAsync(_mainSceneIndex);
-            Time.timeScale = 1f;
+            _ui.RestartButtonClicked.AddListener(_controller.Restart);
         }
 
         private void CreateObjectsHierarchy(
@@ -99,38 +77,9 @@ namespace Asteroids
             asteroids.parent = ships.parent = projectiles.parent = parent;
         }
 
-        private void OnDestroyed<T>(Destructible<T> entity, int scoreGain)
-            where T : IWrapable
-        {
-            UpdateParticles<T>(entity);
-            UpdateScores(scoreGain);
-            UpdateUI();
-        }
-
-        private void UpdateParticles<T>(Destructible<T> entity)
-            where T : IWrapable
-        {
-            _impactParticle.transform.position = entity.transform.position;
-            _impactParticle.Play();
-        }
-
-        private void UpdateScores(int gain)
-        {
-            _score += gain;
-            _data.HighScore = Math.Max(_score, _data.HighScore);
-        }
-
-        private void UpdateUI()
-        {
-            _ui.UpdateScore(_score);
-            _ui.UpdateHighScore(_data.HighScore);
-        }
-
         private void OnApplicationFocus(bool hasFocus)
         {
-            if (hasFocus) return;
-
-            _saveSystem.Save(_data);
+            _controller.HandleApplicationFocus(hasFocus);
         }
 
         private void OnValidate()
