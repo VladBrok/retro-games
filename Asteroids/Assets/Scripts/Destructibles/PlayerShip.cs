@@ -17,7 +17,7 @@ namespace Asteroids
         private Weapon<Projectile> _weapon;
 
         public void Initialize(
-            Wraparound<PlayerShip> wraparound, 
+            WraparoundBase<PlayerShip> wraparound, 
             Bounds viewArea, 
             Transform projectileContainer)
         {
