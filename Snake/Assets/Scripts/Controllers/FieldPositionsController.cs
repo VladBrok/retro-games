@@ -55,7 +55,6 @@ namespace SnakeGame.Controllers
 
         private void InitializeEmptyPositions(Bounds fieldArea)
         {
-            // TODO: Introduce a GridSize instead of offsets and "x++ / y++".
             _emptyPositions = new HashSet<Vector2>();
             float yMin = Mathf.Round(fieldArea.min.y) + 1f;
             float yMax = Mathf.Round(fieldArea.max.y);

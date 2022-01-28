@@ -8,17 +8,17 @@ namespace SnakeGame.Controllers
     public class SnakeController
     {
         private readonly ISnake _snake;
-        private readonly IInputProvider _input;
+        private readonly IMovementInput _input;
         private Vector2 _movementDirection;
 
         public SnakeController(ISnake snake,
-                               IInputProvider input,
+                               IMovementInput input,
                                ITrigger food,
                                Func<IBody> createBody)
         {
             _snake = snake;
             _input = input;
-            food.TriggerEntered += () => { for (int i = 0; i < 30; i++) _snake.AddBody(createBody()); };
+            food.TriggerEntered += () => _snake.AddBody(createBody());
 
             _movementDirection = snake.MovementDirection;
         }

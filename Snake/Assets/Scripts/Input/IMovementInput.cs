@@ -1,7 +1,7 @@
 ﻿
 namespace SnakeGame.Input
 {
-    public interface IInputProvider
+    public interface IMovementInput
     {
         float Horizontal { get; }
         float Vertical { get; }

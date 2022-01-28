@@ -1,7 +1,8 @@
-﻿
+﻿using UnityEngine;
+
 namespace SnakeGame.Input
 {
-    public class KeyboardInput : IInputProvider
+    public class KeyboardInput : IMovementInput, IPauseInput
     {
         public float Horizontal
         {
@@ -11,6 +12,11 @@ namespace SnakeGame.Input
         public float Vertical
         {
             get { return UnityEngine.Input.GetAxisRaw("Vertical"); }
+        }
+
+        public bool Pause
+        {
+            get { return UnityEngine.Input.GetKeyDown(KeyCode.P); }
         }
     }
 }

@@ -1,15 +1,17 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using SnakeGame.Input;
+using UnityEditor;
 using UnityEngine.SceneManagement;
-using System;
+using SnakeGame.Input;
 using SnakeGame.Snakes;
 using SnakeGame.Helpers;
 using SnakeGame.Controllers;
 
 namespace SnakeGame.MonoBehaviours
 {
+    [RequireComponent(typeof(Pauser))]
     public class Game : MonoBehaviour
     {
         private static readonly int MainSceneIndex = 0;
@@ -21,8 +23,8 @@ namespace SnakeGame.MonoBehaviours
         [SerializeField] private SpriteRenderer _gameFieldArea;
         [SerializeField] private UI _ui;
 
-        private readonly WaitForSeconds _foodHideTime = new WaitForSeconds(0.1f);
-        private readonly WaitForSeconds _snakeMoveDelay = new WaitForSeconds(0.15f);
+        private readonly WaitForSeconds _waitForHideDelay = new WaitForSeconds(0.1f);
+        private readonly WaitForSeconds _waitForMoveDelay = new WaitForSeconds(0.15f);
         private readonly Vector2 _initialMovementDirection = Vector2.up;
 
         private SnakeController _snakeController;
@@ -42,13 +44,17 @@ namespace SnakeGame.MonoBehaviours
             TriggerBody snakeHead = CreateSnakeHead();
             TriggerBody snakeBody = CreateSnakeBody();
             ISnake snake = CreateSnake(snakeHead, snakeBody);
+            KeyboardInput input = CreateInput();
 
             _positionsController = CreatePositionsController(snake);
-            _snakeController = CreateSnakeController(snake, food);
+            _snakeController = CreateSnakeController(input, snake, food);
             _foodRespawner = CreateRespawner(snake, food);
             _field = CreateField(snakeHead);
 
             _ui.Initialize(food);
+            _ui.QuitButtonClicked.AddListener(Quit);
+
+            GetComponent<Pauser>().Initialize(input);
         }
 
         private void BeginGame()
@@ -62,7 +68,7 @@ namespace SnakeGame.MonoBehaviours
             for (; ; )
             {
                 _snakeController.MoveSnake();
-                yield return _snakeMoveDelay;
+                yield return _waitForMoveDelay;
             }
         }
 
@@ -84,7 +90,8 @@ namespace SnakeGame.MonoBehaviours
 
         private TriggerBody CreateSnakeBody()
         {
-            TriggerBody body = Instantiate(_bodyPrefab, _spawnPoint.position, Quaternion.identity);
+            TriggerBody body = Instantiate(
+                _bodyPrefab, _spawnPoint.position, Quaternion.identity);
             body.TriggerEntered += GameOver;
             return body;
         }
@@ -101,9 +108,15 @@ namespace SnakeGame.MonoBehaviours
             return controller;
         }
 
-        private SnakeController CreateSnakeController(ISnake snake, ITrigger food)
+        private KeyboardInput CreateInput()
         {
-            var input = new KeyboardInput();
+            return new KeyboardInput();
+        }
+
+        private SnakeController CreateSnakeController(IMovementInput input, 
+                                                      ISnake snake, 
+                                                      ITrigger food)
+        {
             return new SnakeController(snake, input, food, CreateSnakeBody);
         }
 
@@ -117,16 +130,16 @@ namespace SnakeGame.MonoBehaviours
         private Respawner CreateRespawner(ISnake snake, TriggerBody food)
         {
             Action beforeRespawn = () => 
-                StartCoroutine(HideTemporarly(food.gameObject, _foodHideTime));
+                StartCoroutine(HideTemporarly(food.gameObject));
             var respawner = new Respawner(food, _positionsController, beforeRespawn);
             food.TriggerEntered += respawner.RespawnTarget;
             return respawner;
         }
 
-        private IEnumerator HideTemporarly(GameObject toHide, WaitForSeconds hideTime)
+        private IEnumerator HideTemporarly(GameObject toHide)
         {
             toHide.SetActive(false);
-            yield return hideTime;
+            yield return _waitForHideDelay;
             toHide.SetActive(true);
         }
 
@@ -139,6 +152,15 @@ namespace SnakeGame.MonoBehaviours
         {
             Debug.Log("<color=green>VICTORY!</color>");
             Time.timeScale = 0f;
+        }
+
+        private void Quit()
+        {
+#if UNITY_EDITOR
+            EditorApplication.isPlaying = false;
+#else
+            Application.Quit();
+#endif
         }
     }
 }
