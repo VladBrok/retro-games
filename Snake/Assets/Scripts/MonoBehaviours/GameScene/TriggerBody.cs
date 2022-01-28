@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace SnakeGame.MonoBehaviours
+namespace SnakeGame.MonoBehaviours.GameScene
 {
     [RequireComponent(typeof(Collider2D))]
     public class TriggerBody : MonoBehaviour, IBody, ITrigger

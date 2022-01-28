@@ -1,27 +1,24 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
 using UnityEngine.SceneManagement;
-using SnakeGame.Input;
-using SnakeGame.Snakes;
-using SnakeGame.Helpers;
 using SnakeGame.Controllers;
+using SnakeGame.Helpers;
+using SnakeGame.Input;
+using SnakeGame.MonoBehaviours.Shared;
+using SnakeGame.Snakes;
 
-namespace SnakeGame.MonoBehaviours
+namespace SnakeGame.MonoBehaviours.GameScene
 {
     [RequireComponent(typeof(Pauser))]
     public class Game : MonoBehaviour
     {
-        private static readonly int MainSceneIndex = 0;
-
         [SerializeField] private Transform _spawnPoint;
         [SerializeField] private TriggerBody _headPrefab;
         [SerializeField] private TriggerBody _bodyPrefab;
         [SerializeField] private TriggerBody _foodPrefab;
         [SerializeField] private SpriteRenderer _gameFieldArea;
-        [SerializeField] private UI _ui;
+        [SerializeField] private GameUI _ui;
 
         private readonly WaitForSeconds _waitForHideDelay = new WaitForSeconds(0.1f);
         private readonly WaitForSeconds _waitForMoveDelay = new WaitForSeconds(0.15f);
@@ -52,7 +49,7 @@ namespace SnakeGame.MonoBehaviours
             _field = CreateField(snakeHead);
 
             _ui.Initialize(food);
-            _ui.QuitButtonClicked.AddListener(Quit);
+            _ui.QuitButtonClicked.AddListener(GoToMainMenu);
 
             GetComponent<Pauser>().Initialize(input);
         }
@@ -154,13 +151,9 @@ namespace SnakeGame.MonoBehaviours
             Time.timeScale = 0f;
         }
 
-        private void Quit()
+        private void GoToMainMenu()
         {
-#if UNITY_EDITOR
-            EditorApplication.isPlaying = false;
-#else
-            Application.Quit();
-#endif
+            SceneManager.LoadSceneAsync(SharedConstants.MainMenuSceneIndex);
         }
     }
 }

@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace SnakeGame.MonoBehaviours
+namespace SnakeGame.MonoBehaviours.GameScene
 {
-    public class UI : MonoBehaviour
+    public class GameUI : MonoBehaviour
     {
         [SerializeField] private Text _scoreText;
         [SerializeField] private Canvas _pauseCanvas;

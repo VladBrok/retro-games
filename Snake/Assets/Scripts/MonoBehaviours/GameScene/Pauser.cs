@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 using SnakeGame.Input;
 
-namespace SnakeGame.MonoBehaviours
+namespace SnakeGame.MonoBehaviours.GameScene
 {
     public class Pauser : MonoBehaviour
     {
-        [SerializeField] private UI _ui;
+        [SerializeField] private GameUI _ui;
 
         private IPauseInput _input;
 
@@ -13,6 +13,7 @@ namespace SnakeGame.MonoBehaviours
         {
             _input = input;
             _ui.ContinueButtonClicked.AddListener(Unpause);
+            _ui.QuitButtonClicked.AddListener(Unpause);
         }
 
         private void Update()
