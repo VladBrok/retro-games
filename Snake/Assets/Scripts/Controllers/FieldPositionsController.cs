@@ -55,7 +55,7 @@ namespace SnakeGame.Controllers
 
         private void InitializeEmptyPositions(Bounds fieldArea)
         {
-            _emptyPositions = new HashSet<Vector2>();
+            _emptyPositions = new HashSet<Vector2>(new Vector2EqualityComparer());
             float yMin = Mathf.Round(fieldArea.min.y) + 1f;
             float yMax = Mathf.Round(fieldArea.max.y);
             float xMin = Mathf.Round(fieldArea.min.x);
@@ -77,6 +77,19 @@ namespace SnakeGame.Controllers
         {
             _previousHeadPosition = _snake.Head.Position;
             _previousTipPosition = _snake.Tip.Position;
+        }
+
+        private class Vector2EqualityComparer : IEqualityComparer<Vector2>
+        {
+            public bool Equals(Vector2 x, Vector2 y)
+            {
+                return x == y;
+            }
+
+            public int GetHashCode(Vector2 obj)
+            {
+                return obj.GetHashCode();
+            }
         }
     }
 }
