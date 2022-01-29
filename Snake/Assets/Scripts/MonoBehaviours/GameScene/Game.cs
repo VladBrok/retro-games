@@ -50,8 +50,11 @@ namespace SnakeGame.MonoBehaviours.GameScene
 
             _ui.Initialize(food);
             _ui.QuitButtonClicked.AddListener(GoToMainMenu);
+            _ui.MainMenuButtonClicked.AddListener(GoToMainMenu);
+            _ui.RestartButtonClicked.AddListener(Restart);
 
             GetComponent<Pauser>().Initialize(input);
+            Time.timeScale = 1f;
         }
 
         private void BeginGame()
@@ -142,7 +145,13 @@ namespace SnakeGame.MonoBehaviours.GameScene
 
         private void GameOver()
         {
-            Debug.Log("<color=red>Game over.</color>");
+            _ui.SetGameOverActive(true);
+            Time.timeScale = 0f;
+        }
+
+        private void Restart()
+        {
+            SceneManager.LoadSceneAsync(SharedConstants.GameSceneIndex);
         }
 
         private void Victory()

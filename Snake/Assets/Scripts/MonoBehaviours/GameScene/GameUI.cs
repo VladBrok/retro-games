@@ -7,8 +7,11 @@ namespace SnakeGame.MonoBehaviours.GameScene
     {
         [SerializeField] private Text _scoreText;
         [SerializeField] private Canvas _pauseCanvas;
+        [SerializeField] private Canvas _gameOverCanvas;
         [SerializeField] private Button _continueButton;
         [SerializeField] private Button _quitButton;
+        [SerializeField] private Button _mainMenuButton;
+        [SerializeField] private Button _restartButton;
 
         private int _score;
 
@@ -16,10 +19,17 @@ namespace SnakeGame.MonoBehaviours.GameScene
         {
             get { return _continueButton.onClick; }
         }
-
         public Button.ButtonClickedEvent QuitButtonClicked
         {
             get { return _quitButton.onClick; }
+        }
+        public Button.ButtonClickedEvent MainMenuButtonClicked
+        {
+            get { return _mainMenuButton.onClick; }
+        }
+        public Button.ButtonClickedEvent RestartButtonClicked
+        {
+            get { return _restartButton.onClick; }
         }
 
         public void Initialize(ITrigger food)
@@ -30,6 +40,11 @@ namespace SnakeGame.MonoBehaviours.GameScene
         public void SetPauseActive(bool active)
         {
             _pauseCanvas.gameObject.SetActive(active);
+        }
+
+        public void SetGameOverActive(bool active)
+        {
+            _gameOverCanvas.gameObject.SetActive(active);
         }
 
         private void UpdateScore()
