@@ -9,7 +9,7 @@ namespace SnakeGame.Helpers
     public class Respawner
     {
         private readonly IBody _target;
-        private readonly IEmptyPositionsProvider _helper;
+        private readonly IEmptyPositionsProvider _positionsProvider;
         private Action _beforeRespawn;
 
         public Respawner(IBody target, 
@@ -17,25 +17,24 @@ namespace SnakeGame.Helpers
                          Action beforeRespawn)
         {
             _target = target;
-            _helper = positionsProvider;
+            _positionsProvider = positionsProvider;
             _beforeRespawn = beforeRespawn;
         }
 
         public void RespawnTarget()
         {
+            if (!_positionsProvider.EmptyPositions.Any())
+            {
+                return;
+            }
             _beforeRespawn();
             _target.Position = GetRandomPosition();
         }
 
         private Vector2 GetRandomPosition()
         {
-            if (!_helper.EmptyPositions.Any())
-            {
-                return new Vector2();
-            }
-
-            int randIndex = Random.Range(0, _helper.EmptyPositions.Count());
-            return _helper.EmptyPositions.ElementAt(randIndex);
+            int randIndex = Random.Range(0, _positionsProvider.EmptyPositions.Count());
+            return _positionsProvider.EmptyPositions.ElementAt(randIndex);
         }
     }
 }

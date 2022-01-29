@@ -132,7 +132,11 @@ namespace SnakeGame.MonoBehaviours.GameScene
             Action beforeRespawn = () => 
                 StartCoroutine(HideTemporarly(food.gameObject));
             var respawner = new Respawner(food, _positionsController, beforeRespawn);
-            food.TriggerEntered += respawner.RespawnTarget;
+            food.TriggerEntered += () =>
+                {
+                    _positionsController.Update();
+                    respawner.RespawnTarget();
+                };
             return respawner;
         }
 

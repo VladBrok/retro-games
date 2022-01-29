@@ -9,7 +9,21 @@ namespace SnakeGame.Editor.Tests.Helpers
     public class RespawnerTests
     {
         [Test]
-        public void RespawnTarget_CallsProvidedDelegate()
+        public void RespawnTarget_EmptyPositionsAreAvailable_CallsProvidedDelegate()
+        {
+            var target = Substitute.For<IBody>();
+            var positionProvider = Substitute.For<IEmptyPositionsProvider>();
+            bool delegateCalled = false;
+            var respawner = new Respawner(target, positionProvider, () => delegateCalled = true);
+            positionProvider.EmptyPositions.Returns(new[] { Vector2.zero });
+
+            respawner.RespawnTarget();
+
+            Assert.IsTrue(delegateCalled);
+        }
+
+        [Test]
+        public void RespawnTarget_NoEmptyPositions_DelegateIsNotCalled()
         {
             var target = Substitute.For<IBody>();
             var positionProvider = Substitute.For<IEmptyPositionsProvider>();
@@ -18,7 +32,7 @@ namespace SnakeGame.Editor.Tests.Helpers
 
             respawner.RespawnTarget();
 
-            Assert.That(delegateCalled);
+            Assert.IsFalse(delegateCalled);
         }
 
         [Test]
