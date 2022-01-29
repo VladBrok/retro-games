@@ -49,9 +49,9 @@ namespace SnakeGame.MonoBehaviours.GameScene
             _field = CreateField(snakeHead);
 
             _ui.Initialize(food);
-            _ui.QuitButtonClicked.AddListener(GoToMainMenu);
-            _ui.MainMenuButtonClicked.AddListener(GoToMainMenu);
             _ui.RestartButtonClicked.AddListener(Restart);
+            _ui.PlayAgainButtonClicked.AddListener(Restart);
+            Array.ForEach(_ui.MainMenuButtonClicked, e => e.AddListener(GoToMainMenu));
 
             GetComponent<Pauser>().Initialize(input);
             Time.timeScale = 1f;
@@ -149,15 +149,15 @@ namespace SnakeGame.MonoBehaviours.GameScene
             Time.timeScale = 0f;
         }
 
+        private void Victory()
+        {
+            _ui.SetVictoryActive(true);
+            Time.timeScale = 0f;
+        }
+
         private void Restart()
         {
             SceneManager.LoadSceneAsync(SharedConstants.GameSceneIndex);
-        }
-
-        private void Victory()
-        {
-            Debug.Log("<color=green>VICTORY!</color>");
-            Time.timeScale = 0f;
         }
 
         private void GoToMainMenu()

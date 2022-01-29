@@ -13,7 +13,6 @@ namespace SnakeGame.MonoBehaviours.GameScene
         {
             _input = input;
             _ui.ContinueButtonClicked.AddListener(Unpause);
-            _ui.QuitButtonClicked.AddListener(Unpause);
         }
 
         private void Update()
