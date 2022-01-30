@@ -7,6 +7,7 @@ using Asteroids.Extensions;
 
 namespace Asteroids
 {
+    [RequireComponent(typeof(Respawner))]
     [DisallowMultipleComponent]
     public sealed class Game : MonoBehaviour, ICoroutineStarter
     {        
@@ -109,11 +110,13 @@ namespace Asteroids
 
         private PlayerShip CreatePlayer(Transform shipContainer, Transform projectileContainer)
         {
+            var respawner = GetComponent<Respawner>();
             PlayerShip player = Instantiate(_playerPrefab, shipContainer);
             player.Initialize(
                 new Wraparound<PlayerShip>(player, _cameraView),
                 _cameraView,
-                projectileContainer);
+                projectileContainer,
+                respawner);
             return player;
         }
 

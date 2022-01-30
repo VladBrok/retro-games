@@ -36,7 +36,7 @@ namespace Asteroids
             Movement.Direction = _getDirection();
         }
 
-        public new void Destroy()
+        public override void Destroy()
         {
             StartCoroutine(DestroyRoutine());
         }

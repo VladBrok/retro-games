@@ -6,37 +6,28 @@ using Random = UnityEngine.Random;
 
 namespace Asteroids
 {
-    [RequireComponent(typeof(IActivable))]
     [DisallowMultipleComponent]
     public class Respawner : MonoBehaviour
     {
-        [SerializeField] private Vector2 _position;
         [SerializeField] private float _delayInSeconds;
         [SerializeField] private LayerMask _mask;
 
-        private Bounds _cameraView;
-        private MonoBehaviour _coroutineStartHelper;
         private IActivable _target;
-        private WaitForSeconds _waitForRespawnDelay;
         private IRespawnInput _input;
+        private Bounds _viewArea;
+        private WaitForSeconds _waitForRespawnDelay;
 
-        public void Respawn()
+        public void Initialize(IActivable target, IRespawnInput input, Bounds viewArea)
         {
-            RespawnAt(_position);
+            _target = target;
+            _input = input;
+            _viewArea = viewArea;
+            _waitForRespawnDelay = new WaitForSeconds(_delayInSeconds);
         }
 
-        private void Awake()
+        public void RespawnAt(Vector2 position)
         {
-            _target = GetComponent<IActivable>();
-            _cameraView = Camera.main.GetViewBounds2D();
-            _waitForRespawnDelay = new WaitForSeconds(_delayInSeconds);
-
-            _coroutineStartHelper = new GameObject(
-                gameObject.name + "CoroutineStartHelper").AddComponent<Empty>();
-            _coroutineStartHelper.transform.parent = gameObject.transform.parent;
-
-            // FIXME: Pass input a dependenciy
-            _input = new KeyboardInput();
+            StartCoroutine(RespawnRoutine(position));
         }
 
         private void Update()
@@ -44,15 +35,10 @@ namespace Asteroids
             if (_input.Respawn)
             {
                 var respawnLocation = new Vector2(
-                    Random.Range(_cameraView.min.x, _cameraView.max.x),
-                    Random.Range(_cameraView.min.y, _cameraView.max.y));
+                    Random.Range(_viewArea.min.x, _viewArea.max.x),
+                    Random.Range(_viewArea.min.y, _viewArea.max.y));
                 RespawnAt(respawnLocation);
             }
-        }
-
-        private void RespawnAt(Vector2 position)
-        {
-            _coroutineStartHelper.StartCoroutine(RespawnRoutine(position));
         }
 
         private IEnumerator RespawnRoutine(Vector2 position)
