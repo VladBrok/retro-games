@@ -13,6 +13,7 @@ namespace Asteroids
         [SerializeField] private UI _ui;
         [SerializeField] private GameConfig _gameConfig;
         [SerializeField] private AsteroidConfig[] _asteroidConfigs;
+        [SerializeField] private ObjectConfig _enemyConfig;
         [SerializeField] private ParticleSystem _impactParticle;
         [SerializeField] private PlayerShip _playerPrefab;
         [SerializeField] private EnemyShip _enemyPrefab;
@@ -54,12 +55,20 @@ namespace Asteroids
             Transform projectileContainer)
         {
             var enemySpawner = new EnemySpawner(
-                _enemyPrefab, shipContainer, projectileContainer, _cameraView, Camera.main);
-            enemySpawner.Destroyed += e => _gameController.HandleDestroyOf(e, 50);
+                _enemyPrefab, 
+                shipContainer, 
+                projectileContainer,
+                _cameraView, 
+                Camera.main,
+                _enemyConfig);
+            enemySpawner.Destroyed += e =>
+                _gameController.HandleDestroyOf(e, _enemyConfig.Score);
             return enemySpawner;
         }
 
-        private void CreateAsteroidController(PlayerShip player, AsteroidSpawner asteroidSpawner)
+        private void CreateAsteroidController(
+            PlayerShip player, 
+            AsteroidSpawner asteroidSpawner)
         {
             new AsteroidController<Asteroid>(
                 asteroidSpawner, player, _gameConfig.InitialBigAsteroidCount);
@@ -71,7 +80,8 @@ namespace Asteroids
 
             var asteroidSpawner = new AsteroidSpawner(
                 _asteroidConfigs, asteroidContainer, _cameraView);
-            asteroidSpawner.Destroyed += a => _gameController.HandleDestroyOf(a, a.Config.Score);
+            asteroidSpawner.Destroyed += a => 
+                _gameController.HandleDestroyOf(a, a.Config.Score);
             return asteroidSpawner;
         }
 
@@ -128,9 +138,7 @@ namespace Asteroids
         {
             var asteroidTypes = Enum.GetValues(typeof(AsteroidType)).Cast<AsteroidType>();
             Debug.Assert(
-                _asteroidConfigs
-                    .Select(config => config.Type)
-                    .SequenceEqual(asteroidTypes),
+                _asteroidConfigs.Select(config => config.Type).SequenceEqual(asteroidTypes),
                 "Asteroid configs should have one config for each asteroid type.");
         }
     }

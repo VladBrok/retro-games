@@ -33,15 +33,14 @@ namespace Asteroids
                 _rigidbody.AddRelativeForce(Vector2.up * accelerationForce);
             }
 
-            if (_turnDirection != 0f)
-            {
-                _rigidbody.AddTorque(_turnDirection * turnAngle);
-                _rigidbody.rotation += _turnDirection * turnAngle;
-            }
-            else
+            if (_turnDirection == 0f)
             {
                 _rigidbody.angularVelocity = 0f;
+                return;
             }
+
+            _rigidbody.AddTorque(_turnDirection * turnAngle);
+            _rigidbody.rotation += _turnDirection * turnAngle;
         }
 
         public void Stop()

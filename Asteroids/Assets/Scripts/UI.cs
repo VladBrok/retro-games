@@ -31,7 +31,8 @@ namespace Asteroids
             _player.Dead += OnPlayerDead;
 
             _lives = new Stack<Image>(
-                Enumerable.Range(0, player.CurrentLives)
+                Enumerable
+                    .Range(0, player.CurrentLives)
                     .Select(_ => Instantiate(_lifePrefab, _livesPanel.transform)));
             
             SetGameOverActive(false);

@@ -4,7 +4,7 @@ using Asteroids.Extensions;
 
 namespace Asteroids
 {
-    [RequireComponent(typeof(IHideable))]
+    [RequireComponent(typeof(IActivable))]
     [DisallowMultipleComponent]
     public class Respawner : MonoBehaviour
     {
@@ -14,9 +14,9 @@ namespace Asteroids
 
         private Bounds _cameraView;
         private MonoBehaviour _coroutineStartHelper;
-        private IHideable _target;
+        private IActivable _target;
         private WaitForSeconds _waitForRespawnDelay;
-        private RandomRespawner _randomRespawner;
+        private IRespawnInput _input;
 
         public void Respawn()
         {
@@ -25,7 +25,7 @@ namespace Asteroids
 
         private void Awake()
         {
-            _target = GetComponent<IHideable>();
+            _target = GetComponent<IActivable>();
             _cameraView = Camera.main.GetViewBounds2D();
             _waitForRespawnDelay = new WaitForSeconds(_delayInSeconds);
 
@@ -33,14 +33,19 @@ namespace Asteroids
                 gameObject.name + "CoroutineStartHelper").AddComponent<Empty>();
             _coroutineStartHelper.transform.parent = gameObject.transform.parent;
 
-            // FIXME: Pass input and respawner as dependencies.
-            _randomRespawner = new RandomRespawner(
-                new KeyboardInput(), Random.Range, RespawnAt, _cameraView);
+            // FIXME: Pass input a dependenciy
+            _input = new KeyboardInput();
         }
 
         private void Update()
         {
-            _randomRespawner.Update();
+            if (_input.Respawn)
+            {
+                var respawnLocation = new Vector2(
+                    Random.Range(_cameraView.min.x, _cameraView.max.x),
+                    Random.Range(_cameraView.min.y, _cameraView.max.y));
+                RespawnAt(respawnLocation);
+            }
         }
 
         private void RespawnAt(Vector2 position)
@@ -50,13 +55,13 @@ namespace Asteroids
 
         private IEnumerator RespawnRoutine(Vector2 position)
         {
-            _target.Hide();
+            _target.Activate();
             do
             {
                 yield return _waitForRespawnDelay;
             } while (!CanSpawnAt(position));
             _target.Center = position;
-            _target.Show();
+            _target.Deactivate();
         }
 
         private bool CanSpawnAt(Vector2 position)

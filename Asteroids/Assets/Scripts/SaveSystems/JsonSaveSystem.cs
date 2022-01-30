@@ -26,14 +26,10 @@ namespace Asteroids
         {
             if (!File.Exists(_path)) return new SaveData();
 
-            var json = new StringBuilder();
+            string json = "";
             using (var reader = new StreamReader(_path))
             {
-                string line = "";
-                while ((line = reader.ReadLine()) != null)
-                {
-                    json.Append(line);
-                }
+                json = reader.ReadToEnd();
             }
             return JsonUtility.FromJson<SaveData>(json.ToString());
         }

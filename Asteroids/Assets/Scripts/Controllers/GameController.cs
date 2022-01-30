@@ -19,9 +19,9 @@ namespace Asteroids
         {
             _ui = ui;
             _impactParticle = impactParticle;
-
             _saveSystem = new JsonSaveSystem("data.txt");
             _waitForPauseDelay = new WaitForSeconds(config.PauseDelayInSeconds);
+
             _data = _saveSystem.Load();
             _ui.UpdateHighScore(_data.HighScore);
         }

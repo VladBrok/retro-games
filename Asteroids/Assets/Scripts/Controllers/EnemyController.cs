@@ -8,6 +8,7 @@ namespace Asteroids
     {
         private readonly ISpawner<T> _spawner;
         private readonly Bounds _viewArea;
+        private readonly float _spawnOffset;
 
         public EnemyController(
             ISpawner<T> spawner,
@@ -17,6 +18,7 @@ namespace Asteroids
         {
             _spawner = spawner;
             _viewArea = viewArea;
+            _spawnOffset = 1f;
             coroutineStarter.StartCoroutine(SpawnRoutine(spawnDelayInSeconds));
         }
 
@@ -31,32 +33,40 @@ namespace Asteroids
 
         private Vector2 GetSpawnOrigin()
         {
-            float spawnOffset = 1f;
-            var spawnOrigin = Vector2.zero;
             float randomValue = Random.Range(0f, 0.8f);
 
-            if (randomValue <= 0.2f)
-            {
-                spawnOrigin.x = Random.Range(_viewArea.min.x, _viewArea.max.x);
-                spawnOrigin.y = _viewArea.max.y + spawnOffset;
-            }
-            else if (randomValue <= 0.4f)
-            {
-                spawnOrigin.x = _viewArea.max.x + spawnOffset;
-                spawnOrigin.y = Random.Range(_viewArea.min.y, _viewArea.max.y);
-            }
-            else if (randomValue <= 0.6f)
-            {
-                spawnOrigin.x = Random.Range(_viewArea.min.x, _viewArea.max.x);
-                spawnOrigin.y = _viewArea.min.y - spawnOffset;
-            }
-            else
-            {
-                spawnOrigin.x = _viewArea.min.x - spawnOffset;
-                spawnOrigin.y = Random.Range(_viewArea.min.y, _viewArea.max.y);
-            }
+            return (randomValue <= 0.2f) ? GetPositionAtTop() :
+                   (randomValue <= 0.4f) ? GetPositionAtRight() :
+                   (randomValue <= 0.6f) ? GetPositionAtBottom() :
+                   GetPositionAtLeft();
+        }
 
-            return spawnOrigin;
+        private Vector2 GetPositionAtTop()
+        {
+            return new Vector2(
+                Random.Range(_viewArea.min.x, _viewArea.max.x),
+                _viewArea.max.y + _spawnOffset);
+        }
+
+        private Vector2 GetPositionAtRight()
+        {
+            return new Vector2(
+                _viewArea.max.x + _spawnOffset,
+                Random.Range(_viewArea.min.y, _viewArea.max.y));
+        }
+
+        private Vector2 GetPositionAtBottom()
+        {
+            return new Vector2(
+                Random.Range(_viewArea.min.x, _viewArea.max.x),
+                _viewArea.min.y - _spawnOffset);
+        }
+
+        private Vector2 GetPositionAtLeft()
+        {
+            return new Vector2(
+                _viewArea.min.x - _spawnOffset,
+                Random.Range(_viewArea.min.y, _viewArea.max.y));
         }
     }
 }

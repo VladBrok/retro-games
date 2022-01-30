@@ -2,7 +2,7 @@
 
 namespace Asteroids
 {
-    public class Empty : MonoBehaviour
+    public class Empty : MonoBehaviour, ICoroutineStarter
     {
     }
 }

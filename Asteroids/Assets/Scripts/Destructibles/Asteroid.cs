@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 using Asteroids.Extensions;
 using Random = UnityEngine.Random;
-using System.Collections;
 
 namespace Asteroids
 {
@@ -17,7 +17,7 @@ namespace Asteroids
         }
 
         public void Initialize(
-            Wraparound<Asteroid> wraparound, 
+            WraparoundBase<Asteroid> wraparound, 
             IMovement movement, 
             AsteroidConfig config)
         {
@@ -25,9 +25,9 @@ namespace Asteroids
             _config = config;
         }
 
-        public override void Show()
+        public override void Deactivate()
         {
-            base.Show();
+            base.Deactivate();
             RandomizeOffset();
         }
 

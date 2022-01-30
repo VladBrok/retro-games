@@ -63,8 +63,6 @@ namespace Asteroids
             asteroid.Destroyed += () => Destroy(asteroid);
         }
 
-
-
         private void Destroy(Asteroid asteroid)
         {
             Vector2 asteroidPosition = asteroid.transform.position;

@@ -10,6 +10,7 @@ namespace Asteroids
         private readonly EnemyShip _prefab;
         private readonly Bounds _viewArea;
         private readonly Camera _camera;
+        private readonly ObjectConfig _config;
         private readonly Pool<EnemyShip> _pool;
 
         public EnemySpawner(
@@ -17,11 +18,13 @@ namespace Asteroids
             Transform enemyContainer,
             Transform projectileContainer,
             Bounds viewArea, 
-            Camera camera)
+            Camera camera,
+            ObjectConfig config)
         {
             _prefab = prefab;
             _viewArea = viewArea;
             _camera = camera;
+            _config = config;
             _pool = new Pool<EnemyShip>(
                 _prefab, null, enemyContainer, enemy => Initialize(enemy, projectileContainer));
         }
@@ -48,9 +51,9 @@ namespace Asteroids
         private Vector2 GetMovementDirection(Vector2 origin)
         {
             Vector2 viewportPos = _camera.WorldToViewportPoint(origin);
-            return viewportPos.x <= 0f ? Vector2.right :
-                   viewportPos.x >= 1f ? Vector2.left :
-                   viewportPos.y <= 0f ? Vector2.up :
+            return (viewportPos.x <= 0f) ? Vector2.right :
+                   (viewportPos.x >= 1f) ? Vector2.left :
+                   (viewportPos.y <= 0f) ? Vector2.up :
                    Vector2.down;
         }
 
@@ -58,7 +61,7 @@ namespace Asteroids
         {
             enemy.Initialize(
                 new Wraparound<EnemyShip>(enemy, _viewArea), 
-                new ConsistentMovement(enemy, 2f, Vector2.zero),
+                new ConsistentMovement(enemy, _config.Speed.Max, Vector2.zero),
                 projectileContainer,
                 _viewArea);
             enemy.Destroyed += () => Destroyed(enemy);

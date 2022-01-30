@@ -26,7 +26,7 @@ namespace Asteroids
 
             _weapon = new Weapon<Projectile>(
                input, projectilePool, _projectileConfig.FireRateInSeconds);
-            _weapon.Fired += Fired;
+            _weapon.Fired += () => Fired();
         }
 
         private void InitializeProjectile(

@@ -28,19 +28,17 @@ namespace Asteroids
 
         public T Get()
         {
-            if (_objects.Count == 0)
-            {
-                return InstantiateNew();
-            }
+            if (_objects.Count == 0) return InstantiateNew();
+
             T obj = _objects.Dequeue();
             obj.transform.position = GetSpawnPosition();
-            obj.Show();
+            obj.Deactivate();
             return obj;
         }
 
         public void Return(T obj)
         {
-            obj.Hide();
+            obj.Activate();
             _objects.Enqueue(obj);
         }
 
@@ -53,7 +51,7 @@ namespace Asteroids
                 _parent);
             _initialize(obj);
             obj.Destroyed += () => Return(obj);
-            obj.Show();
+            obj.Deactivate();
             return obj;
         }
 

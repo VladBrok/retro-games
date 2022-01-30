@@ -5,7 +5,7 @@ namespace Asteroids
 {
     [RequireComponent(typeof(BoxCollider2D))]
     [DisallowMultipleComponent]
-    public abstract class Destructible<T> : MonoBehaviour, IDestructible, IHideable
+    public abstract class Destructible<T> : MonoBehaviour, IDestructible, IActivable
         where T : IWrapable
     {
         private BoxCollider2D _collider;
@@ -28,12 +28,12 @@ namespace Asteroids
             _wraparound = wraparound;
         }
 
-        public virtual void Hide()
+        public virtual void Activate()
         {
             gameObject.SetActive(false);
         }
 
-        public virtual void Show()
+        public virtual void Deactivate()
         {
             gameObject.SetActive(true);
         }
