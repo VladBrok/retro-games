@@ -9,7 +9,7 @@ namespace SnakeGame.Snakes
     {
         public static readonly int MinBodyCount = 2;
 
-        private LinkedList<IBody> _bodies;
+        private readonly LinkedList<IBody> _bodies;
         private Vector2 _movementDirection;
 
         public Snake(IBody[] bodies, Vector2 movementDirection)
@@ -66,12 +66,18 @@ namespace SnakeGame.Snakes
                 throw new ArgumentException(newDirection.ToString());
             }
 
-            if (_movementDirection.x != 0f && newDirection.x == 0f
-                || _movementDirection.y != 0f && newDirection.y == 0f
-                || _movementDirection == default(Vector2))
+            bool currentIsHorizontal = _movementDirection.x != 0f;
+            bool currentIsVertical = _movementDirection.y != 0f;
+            bool newIsHorizontal = newDirection.x != 0f;
+            bool newIsVertical = newDirection.y != 0f;
+            bool currentIsNotAssigned = _movementDirection == default(Vector2);
+
+            if (currentIsHorizontal && newIsVertical
+                || currentIsVertical && newIsHorizontal
+                || currentIsNotAssigned)
             {
                 _movementDirection = new Vector2(
-                    Math.Sign(newDirection.x), 
+                    Math.Sign(newDirection.x),
                     Math.Sign(newDirection.y));
             }
         }

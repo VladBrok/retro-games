@@ -12,7 +12,6 @@ namespace SnakeGame.MonoBehaviours.MainMenuScene
         {
             get { return _playButton.onClick; }
         }
-
         public Button.ButtonClickedEvent QuitButtonClicked
         {
             get { return _quitButton.onClick; }

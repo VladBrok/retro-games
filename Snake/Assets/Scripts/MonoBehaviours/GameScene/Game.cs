@@ -129,9 +129,9 @@ namespace SnakeGame.MonoBehaviours.GameScene
 
         private Respawner CreateRespawner(ISnake snake, TriggerBody food)
         {
-            Action beforeRespawn = () => 
+            Action prepareToRespawn = () => 
                 StartCoroutine(HideTemporarly(food.gameObject));
-            var respawner = new Respawner(food, _positionsController, beforeRespawn);
+            var respawner = new Respawner(food, _positionsController, prepareToRespawn);
             food.TriggerEntered += () =>
                 {
                     _positionsController.Update();

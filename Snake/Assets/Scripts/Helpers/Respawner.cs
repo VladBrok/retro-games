@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
 using UnityEngine;
-using Random = UnityEngine.Random;
 using SnakeGame.Controllers;
+using Random = UnityEngine.Random;
 
 namespace SnakeGame.Helpers
 {
@@ -10,15 +10,15 @@ namespace SnakeGame.Helpers
     {
         private readonly IBody _target;
         private readonly IEmptyPositionsProvider _positionsProvider;
-        private Action _beforeRespawn;
+        private Action _prepareToRespawn;
 
         public Respawner(IBody target, 
                          IEmptyPositionsProvider positionsProvider, 
-                         Action beforeRespawn)
+                         Action prepareToRespawn)
         {
             _target = target;
             _positionsProvider = positionsProvider;
-            _beforeRespawn = beforeRespawn;
+            _prepareToRespawn = prepareToRespawn;
         }
 
         public void RespawnTarget()
@@ -27,7 +27,7 @@ namespace SnakeGame.Helpers
             {
                 return;
             }
-            _beforeRespawn();
+            _prepareToRespawn();
             _target.Position = GetRandomPosition();
         }
 
