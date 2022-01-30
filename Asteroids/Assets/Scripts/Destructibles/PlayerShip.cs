@@ -31,7 +31,7 @@ namespace Asteroids
                 projectileContainer,
                 p => new Wraparound<Projectile>(p, viewArea),
                 () => transform.up);
-            weapon.Fired += () => { _animator.SetTrigger("shot"); Debug.Log("trigger set"); };
+            weapon.Fired += () => _animator.SetTrigger("shot");
         }
 
         public override void Destroy()
