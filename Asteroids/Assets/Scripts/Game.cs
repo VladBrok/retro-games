@@ -138,7 +138,7 @@ namespace Asteroids
         {
             var asteroidTypes = Enum.GetValues(typeof(AsteroidType)).Cast<AsteroidType>();
             Debug.Assert(
-                _asteroidConfigs.Select(config => config.Type).SequenceEqual(asteroidTypes),
+                _asteroidConfigs.Select(c => c.Type).SequenceEqual(asteroidTypes),
                 "Asteroid configs should have one config for each asteroid type.");
         }
     }

@@ -10,10 +10,11 @@ namespace Asteroids
     {
         private SoundEffectsPlayer _sfxPlayer;
         private SpriteRenderer _renderer;
-        private float _lifetimeInSeconds;
-        private float _lifetimeLeft;
+        private Collider2D _collider;
         private Func<Vector2> _getDirection;
         private WaitWhile _waitWhileSoundPlaying;
+        private float _lifetimeInSeconds;
+        private float _lifetimeLeft;
         private bool _destroying;
 
         public void Initialize(
@@ -25,6 +26,7 @@ namespace Asteroids
             base.Initialize(wraparound, movement);
             _getDirection = getDirection;
             _lifetimeInSeconds = lifetimeInSeconds;
+            _lifetimeLeft = _lifetimeInSeconds;
         }
 
         public override void Deactivate()
@@ -35,7 +37,7 @@ namespace Asteroids
             Movement.Direction = _getDirection();
         }
 
-        public override void Destroy()
+        public new void Destroy()
         {
             StartCoroutine(DestroyRoutine());
         }
@@ -45,8 +47,8 @@ namespace Asteroids
             base.Awake();
             _sfxPlayer = GetComponent<SoundEffectsPlayer>();
             _renderer = GetComponent<SpriteRenderer>();
+            _collider = GetComponent<Collider2D>();
             _waitWhileSoundPlaying = new WaitWhile(() => _sfxPlayer.IsPlaying);
-            _lifetimeLeft = _lifetimeInSeconds;
         }
 
         protected override void Update()
@@ -71,11 +73,11 @@ namespace Asteroids
             _destroying = true;
             _sfxPlayer.PlayOneShot(SoundEffectType.Explosion);
             _renderer.enabled = false;
-            GetComponent<Collider2D>().enabled = false;
+            _collider.enabled = false;
 
             yield return _waitWhileSoundPlaying;
 
-            GetComponent<Collider2D>().enabled = true;
+            _collider.enabled = true;
             _renderer.enabled = true;
             base.Destroy();
         }
