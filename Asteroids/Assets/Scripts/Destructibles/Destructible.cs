@@ -22,6 +22,10 @@ namespace Asteroids
         {
             get { return _collider.bounds.extents; }
         }
+        protected Collider2D Collider
+        {
+            get { return _collider; }
+        }
 
         public void Initialize(WraparoundBase<T> wraparound)
         {

@@ -1,8 +1,6 @@
 ﻿using System;
 using UnityEngine;
 
-// FIXME: The class is very similar to the AsteroidSpawner class.
-
 namespace Asteroids
 {
     public class EnemySpawner : ISpawner<EnemyShip>
@@ -26,7 +24,10 @@ namespace Asteroids
             _camera = camera;
             _config = config;
             _pool = new Pool<EnemyShip>(
-                _prefab, null, enemyContainer, enemy => Initialize(enemy, projectileContainer));
+                _prefab, 
+                null, 
+                enemyContainer, 
+                e => Initialize(e, projectileContainer));
         }
 
         public event Action<EnemyShip> Destroyed = delegate { };

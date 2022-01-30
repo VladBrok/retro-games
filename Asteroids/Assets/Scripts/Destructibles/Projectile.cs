@@ -10,7 +10,6 @@ namespace Asteroids
     {
         private SoundEffectsPlayer _sfxPlayer;
         private SpriteRenderer _renderer;
-        private Collider2D _collider;
         private Func<Vector2> _getDirection;
         private WaitWhile _waitWhileSoundPlaying;
         private float _lifetimeInSeconds;
@@ -47,7 +46,6 @@ namespace Asteroids
             base.Awake();
             _sfxPlayer = GetComponent<SoundEffectsPlayer>();
             _renderer = GetComponent<SpriteRenderer>();
-            _collider = GetComponent<Collider2D>();
             _waitWhileSoundPlaying = new WaitWhile(() => _sfxPlayer.IsPlaying);
         }
 
@@ -73,11 +71,11 @@ namespace Asteroids
             _destroying = true;
             _sfxPlayer.PlayOneShot(SoundEffectType.Explosion);
             _renderer.enabled = false;
-            _collider.enabled = false;
+            Collider.enabled = false;
 
             yield return _waitWhileSoundPlaying;
 
-            _collider.enabled = true;
+            Collider.enabled = true;
             _renderer.enabled = true;
             base.Destroy();
         }
