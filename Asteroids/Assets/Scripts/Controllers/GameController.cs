@@ -7,11 +7,10 @@ namespace Asteroids
 {
     public class GameController
     {
-        private readonly int _mainSceneIndex = 0;
         private readonly UI _ui;
         private readonly ParticleSystem _impactParticle;
         private readonly ISaveSystem _saveSystem;
-        private readonly WaitForSeconds _waitForPauseDelay;
+        private readonly WaitForSeconds _waitForAfterDeathPause;
         private SaveData _data;
         private int _score;
 
@@ -20,22 +19,22 @@ namespace Asteroids
             _ui = ui;
             _impactParticle = impactParticle;
             _saveSystem = new JsonSaveSystem("data.txt");
-            _waitForPauseDelay = new WaitForSeconds(config.PauseDelayInSeconds);
+            _waitForAfterDeathPause = new WaitForSeconds(config.PauseAfterPlayerDeathInSeconds);
 
             _data = _saveSystem.Load();
             _ui.UpdateHighScore(_data.HighScore);
         }
 
-        public IEnumerator PauseRoutine()
+        public IEnumerator PlayerDeathRoutine()
         {
-            yield return _waitForPauseDelay;
+            yield return _waitForAfterDeathPause;
             Time.timeScale = 0f;
         }
 
         public void Restart()
         {
             _saveSystem.Save(_data);
-            SceneManager.LoadSceneAsync(_mainSceneIndex);
+            SceneManager.LoadSceneAsync((int)Scene.Main);
             Time.timeScale = 1f;
         }
 

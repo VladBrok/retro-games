@@ -43,13 +43,13 @@ namespace Asteroids
 
         private IEnumerator RespawnRoutine(Vector2 position)
         {
-            _target.Activate();
-            do
+            _target.Deactivate();
+            while (!CanSpawnAt(position))
             {
                 yield return _waitForRespawnDelay;
-            } while (!CanSpawnAt(position));
+            }
             _target.Center = position;
-            _target.Deactivate();
+            _target.Activate();
         }
 
         private bool CanSpawnAt(Vector2 position)
@@ -57,6 +57,13 @@ namespace Asteroids
             Vector2 boxSize = _target.Extents * 7;
             Collider2D other = Physics2D.OverlapBox(position, boxSize, 0f, _mask);
             return other == null;
+        }
+
+        private void OnDrawGizmos()
+        {
+            if (_target == null) return;
+
+            Gizmos.DrawWireCube(Vector3.zero, _target.Extents * 7);
         }
     }
 }

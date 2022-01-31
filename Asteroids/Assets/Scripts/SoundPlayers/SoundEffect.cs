@@ -10,13 +10,22 @@ namespace Asteroids
         [SerializeField] private SoundEffectType _type;
         [SerializeField] private AudioClip[] _clips;
 
+        private ReadOnlyCollection<AudioClip> _readonlyClips;
+
         public SoundEffectType Type
         {
             get { return _type; }
         }
         public ReadOnlyCollection<AudioClip> Clips
         {
-            get { return Array.AsReadOnly(_clips); }
+            get 
+            {
+                if (_readonlyClips == null)
+                {
+                    _readonlyClips = Array.AsReadOnly(_clips);
+                }
+                return _readonlyClips; 
+            }
         }
     }
 }

@@ -115,7 +115,8 @@ namespace Asteroids
         private LifeController CreatePlayerLifeController(PlayerShip player)
         {
             var playerLifeController = new LifeController(player, _gameConfig.PlayerLives);
-            playerLifeController.Dead += () => StartCoroutine(_gameController.PauseRoutine());
+            playerLifeController.Dead += () => 
+                StartCoroutine(_gameController.PlayerDeathRoutine());
             return playerLifeController;
         }
 
@@ -126,6 +127,7 @@ namespace Asteroids
         {
             var respawner = GetComponent<Respawner>();
             PlayerShip player = Instantiate(_playerPrefab, shipContainer);
+            player.transform.position = Vector3.zero;
             player.Initialize(
                 new Wraparound<PlayerShip>(player, _cameraView),
                 _cameraView,

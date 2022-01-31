@@ -7,7 +7,7 @@ namespace Asteroids
     {
         [SerializeField] private int _playerLives;
         [SerializeField] private int _initialBigAsteroidCount;
-        [SerializeField] private float _pauseDelayInSeconds;
+        [SerializeField] private float _pauseAfterPlayerDeathInSeconds;
 
         public int PlayerLives
         {
@@ -17,9 +17,9 @@ namespace Asteroids
         {
             get { return _initialBigAsteroidCount; }
         }
-        public float PauseDelayInSeconds
+        public float PauseAfterPlayerDeathInSeconds
         {
-            get { return _pauseDelayInSeconds; }
+            get { return _pauseAfterPlayerDeathInSeconds; }
         }
     }
 }

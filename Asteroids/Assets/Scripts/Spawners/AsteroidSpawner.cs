@@ -20,15 +20,15 @@ namespace Asteroids
         {
             _configs = configs.ToDictionary(cfg => cfg.Type);
             _viewArea = viewArea;
-            _pools = Enum.GetValues(typeof(AsteroidType))
-                .Cast<AsteroidType>()
-                .ToDictionary<AsteroidType, AsteroidType, Pool<Asteroid>>(
-                    type => type,
-                    type => new Pool<Asteroid>(
-                        _configs[type].Prefab, 
-                        null, 
-                        container, 
-                        asteroid => Initialize(asteroid, type)));
+
+            Transform spawnPoint = null;
+            _pools = configs.ToDictionary(
+                c => c.Type,
+                c => new Pool<Asteroid>(
+                          c.Prefab,
+                          spawnPoint,
+                          container,
+                          asteroid => Initialize(asteroid, c)));
         }
 
         public event Action<Asteroid> Destroyed = delegate { };
@@ -50,9 +50,8 @@ namespace Asteroids
                 config.Sprites[Random.Range(0, config.Sprites.Count)];
         }
 
-        private void Initialize(Asteroid asteroid, AsteroidType type)
+        private void Initialize(Asteroid asteroid, AsteroidConfig config)
         {
-            AsteroidConfig config = _configs[type];
             asteroid.Initialize(
                 new Wraparound<Asteroid>(asteroid, _viewArea), 
                 new ConsistentMovement(

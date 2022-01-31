@@ -28,9 +28,9 @@ namespace Asteroids
             _lifetimeLeft = _lifetimeInSeconds;
         }
 
-        public override void Deactivate()
+        public override void Activate()
         {
-            base.Deactivate();
+            base.Activate();
             _destroying = false;
             _lifetimeLeft = _lifetimeInSeconds;
             Movement.Direction = _getDirection();

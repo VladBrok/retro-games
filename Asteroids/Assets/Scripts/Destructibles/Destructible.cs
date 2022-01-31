@@ -10,6 +10,7 @@ namespace Asteroids
     {
         private BoxCollider2D _collider;
         private WraparoundBase<T> _wraparound;
+        private Vector2 _extents;
 
         public event Action Destroyed = delegate { };
 
@@ -20,7 +21,7 @@ namespace Asteroids
         }
         public Vector2 Extents
         {
-            get { return _collider.bounds.extents; }
+            get { return _extents; }
         }
         protected Collider2D Collider
         {
@@ -34,12 +35,12 @@ namespace Asteroids
 
         public virtual void Activate()
         {
-            gameObject.SetActive(false);
+            gameObject.SetActive(true);
         }
 
         public virtual void Deactivate()
         {
-            gameObject.SetActive(true);
+            gameObject.SetActive(false);
         }
 
         public bool Intersects(Bounds other)
@@ -58,6 +59,7 @@ namespace Asteroids
             Debug.Assert(
                 _collider.isTrigger,
                 "BoxCollider2D of the " + gameObject.name + " should be a trigger.");
+            _extents = _collider.bounds.extents;
         }
 
         protected virtual void Update()

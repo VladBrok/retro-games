@@ -32,13 +32,13 @@ namespace Asteroids
 
             T obj = _objects.Dequeue();
             obj.transform.position = GetSpawnPosition();
-            obj.Deactivate();
+            obj.Activate();
             return obj;
         }
 
         public void Return(T obj)
         {
-            obj.Activate();
+            obj.Deactivate();
             _objects.Enqueue(obj);
         }
 
@@ -51,7 +51,7 @@ namespace Asteroids
                 _parent);
             _initialize(obj);
             obj.Destroyed += () => Return(obj);
-            obj.Deactivate();
+            obj.Activate();
             return obj;
         }
 
