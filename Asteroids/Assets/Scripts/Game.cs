@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Collections;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using Asteroids.Extensions;
 
 namespace Asteroids
 {
     [RequireComponent(typeof(Respawner))]
+    [RequireComponent(typeof(AudioSource))]
+    [RequireComponent(typeof(Pauser))]
     [DisallowMultipleComponent]
     public sealed class Game : MonoBehaviour, ICoroutineStarter
     {        
@@ -33,7 +33,8 @@ namespace Asteroids
                 out shipContainer, 
                 out projectileContainer);
 
-            var player = CreatePlayer(shipContainer, projectileContainer);
+            var input = CreateInput();
+            var player = CreatePlayer(shipContainer, projectileContainer, input);
             var asteroidSpawner = CreateAsteroidSpawner(asteroidContainer);
             var enemySpawner = CreateEnemySpawner(shipContainer, projectileContainer);
 
@@ -43,6 +44,16 @@ namespace Asteroids
 
             _ui.Initialize(playerLifeController);
             _ui.RestartButtonClicked.AddListener(_gameController.Restart);
+
+            InitializePauser(input, player);
+        }
+
+        private void InitializePauser(KeyboardInput input, PlayerShip player)
+        {
+            GetComponent<Pauser>().Initialize(
+                input,
+                new PausableAudio(GetComponent<AudioSource>()),
+                player);
         }
 
         private void CreateEnemyController(EnemySpawner enemySpawner)
@@ -108,7 +119,10 @@ namespace Asteroids
             return playerLifeController;
         }
 
-        private PlayerShip CreatePlayer(Transform shipContainer, Transform projectileContainer)
+        private PlayerShip CreatePlayer(
+            Transform shipContainer, 
+            Transform projectileContainer,
+            KeyboardInput input)
         {
             var respawner = GetComponent<Respawner>();
             PlayerShip player = Instantiate(_playerPrefab, shipContainer);
@@ -116,8 +130,14 @@ namespace Asteroids
                 new Wraparound<PlayerShip>(player, _cameraView),
                 _cameraView,
                 projectileContainer,
-                respawner);
+                respawner,
+                input);
             return player;
+        }
+
+        private KeyboardInput CreateInput()
+        {
+            return new KeyboardInput();
         }
 
         private void CreateObjectsHierarchy(

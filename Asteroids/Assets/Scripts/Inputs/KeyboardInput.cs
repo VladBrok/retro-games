@@ -2,7 +2,7 @@
 
 namespace Asteroids
 {
-    public class KeyboardInput : IRespawnInput, IShipInput, IWeaponInput
+    public class KeyboardInput : IRespawnInput, IShipInput, IWeaponInput, IPauseInput
     {
         public bool Respawn
         {
@@ -31,6 +31,11 @@ namespace Asteroids
                        Input.GetKey(KeyCode.D) ? -1f :
                        0f; 
             }
+        }
+
+        public bool Pause
+        {
+            get { return Input.GetKeyDown(KeyCode.P); }
         }
     }
 }
