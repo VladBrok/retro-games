@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Asteroids.Extensions;
+using Random = UnityEngine.Random;
 
 namespace Asteroids
 {
@@ -20,12 +22,14 @@ namespace Asteroids
         [SerializeField] private EnemyShip _enemyPrefab;
 
         private GameController _gameController;
+        private Camera _camera;
         private Bounds _cameraView;
 
         private void Awake()
         {
             _gameController = new GameController(_gameConfig, _ui, _impactParticle);
-            _cameraView = Camera.main.GetViewBounds2D();
+            _camera = Camera.main;
+            _cameraView = _camera.GetViewBounds2D();
 
             Transform shipContainer, projectileContainer, asteroidContainer;
             CreateObjectsHierarchy(
@@ -35,11 +39,11 @@ namespace Asteroids
 
             var input = CreateInput();
             var player = CreatePlayer(shipContainer, projectileContainer, input);
-            var asteroidSpawner = CreateAsteroidSpawner(asteroidContainer);
-            var enemySpawner = CreateEnemySpawner(shipContainer, projectileContainer);
+            var asteroidPools = CreateAsteroidPools(asteroidContainer);
+            var enemyPool = CreateEnemyPool(shipContainer, projectileContainer);
 
-            CreateAsteroidController(player, asteroidSpawner);
-            CreateEnemyController(enemySpawner);
+            CreateAsteroidController(player, asteroidPools);
+            CreateEnemyController(enemyPool);
             var playerLifeController = CreatePlayerLifeController(player);
 
             _ui.Initialize(playerLifeController);
@@ -48,53 +52,97 @@ namespace Asteroids
             InitializePauser(input, player);
         }
 
-        private void InitializePauser(KeyboardInput input, PlayerShip player)
+        private void CreateObjectsHierarchy(
+            out Transform asteroids,
+            out Transform ships,
+            out Transform projectiles)
         {
-            GetComponent<Pauser>().Initialize(
-                input,
-                new PausableAudio(GetComponent<AudioSource>()),
-                player);
+            var parent = new GameObject("_Dynamic").transform;
+            asteroids = new GameObject("Asteroids").transform;
+            ships = new GameObject("Ships").transform;
+            projectiles = new GameObject("Projectiles").transform;
+            asteroids.parent = ships.parent = projectiles.parent = parent;
         }
 
-        private void CreateEnemyController(EnemySpawner enemySpawner)
+        private KeyboardInput CreateInput()
         {
-            new EnemyController<EnemyShip>(
-                enemySpawner, this, _cameraView, new Value(5, 30));
+            return new KeyboardInput();
         }
 
-        private EnemySpawner CreateEnemySpawner(
+        private PlayerShip CreatePlayer(
+            Transform shipContainer,
+            Transform projectileContainer,
+            KeyboardInput input)
+        {
+            var respawner = GetComponent<Respawner>();
+            PlayerShip player = Instantiate(_playerPrefab, shipContainer);
+            player.transform.position = Vector3.zero;
+            player.Initialize(
+                new Wraparound<PlayerShip>(player, _cameraView),
+                _cameraView,
+                projectileContainer,
+                respawner,
+                input);
+            return player;
+        }
+
+        private Dictionary<AsteroidType, IPool<Asteroid>> CreateAsteroidPools(
+            Transform asteroidContainer)
+        {
+            InitializeAsteroidConfigs();
+
+            Transform spawnPoint = null;
+            var pools = _asteroidConfigs
+                .ToDictionary<AsteroidConfig, AsteroidType, IPool<Asteroid>>(
+                    c => c.Type,
+                    c => new Pool<Asteroid>(
+                            c.Prefab,
+                            spawnPoint,
+                            asteroidContainer,
+                            a => InitializeAsteroid(a, c)));
+            return pools;
+        }
+
+        private Pool<EnemyShip> CreateEnemyPool(
             Transform shipContainer, 
             Transform projectileContainer)
         {
-            var enemySpawner = new EnemySpawner(
-                _enemyPrefab, 
-                shipContainer, 
-                projectileContainer,
-                _cameraView, 
-                Camera.main,
-                _enemyConfig);
-            enemySpawner.Destroyed += e =>
-                _gameController.HandleDestroyOf(e, _enemyConfig.Score);
-            return enemySpawner;
+            Transform spawnPoint = null;
+            var pool = new Pool<EnemyShip>(
+                _enemyPrefab,
+                spawnPoint,
+                shipContainer,
+                e => InitializeEnemy(e, projectileContainer));
+            return pool;
         }
 
         private void CreateAsteroidController(
             PlayerShip player, 
-            AsteroidSpawner asteroidSpawner)
+            Dictionary<AsteroidType, IPool<Asteroid>> pools)
         {
             new AsteroidController<Asteroid>(
-                asteroidSpawner, player, _gameConfig.InitialBigAsteroidCount);
+                pools, 
+                player, 
+                _gameConfig.InitialBigAsteroidCount);
         }
 
-        private AsteroidSpawner CreateAsteroidSpawner(Transform asteroidContainer)
+        private void CreateEnemyController(Pool<EnemyShip> pool)
         {
-            InitializeAsteroidConfigs();
+            var coroutineStarter = this;
+            var spawnDelay = new Value(5, 30);
+            new EnemyController<EnemyShip>(
+                pool, 
+                coroutineStarter, 
+                _cameraView, 
+                spawnDelay);
+        }
 
-            var asteroidSpawner = new AsteroidSpawner(
-                _asteroidConfigs, asteroidContainer, _cameraView);
-            asteroidSpawner.Destroyed += a => 
-                _gameController.HandleDestroyOf(a, a.Config.Score);
-            return asteroidSpawner;
+        private LifeController CreatePlayerLifeController(PlayerShip player)
+        {
+            var playerLifeController = new LifeController(player, _gameConfig.PlayerLives);
+            playerLifeController.Dead += () =>
+                StartCoroutine(_gameController.PlayerDeathRoutine());
+            return playerLifeController;
         }
 
         private void InitializeAsteroidConfigs()
@@ -112,46 +160,40 @@ namespace Asteroids
             }
         }
 
-        private LifeController CreatePlayerLifeController(PlayerShip player)
+        private void InitializeEnemy(EnemyShip enemy, Transform projectileContainer)
         {
-            var playerLifeController = new LifeController(player, _gameConfig.PlayerLives);
-            playerLifeController.Dead += () => 
-                StartCoroutine(_gameController.PlayerDeathRoutine());
-            return playerLifeController;
-        }
-
-        private PlayerShip CreatePlayer(
-            Transform shipContainer, 
-            Transform projectileContainer,
-            KeyboardInput input)
-        {
-            var respawner = GetComponent<Respawner>();
-            PlayerShip player = Instantiate(_playerPrefab, shipContainer);
-            player.transform.position = Vector3.zero;
-            player.Initialize(
-                new Wraparound<PlayerShip>(player, _cameraView),
-                _cameraView,
+            enemy.Initialize(
+                new Wraparound<EnemyShip>(enemy, _cameraView),
+                new ConsistentMovement(
+                    enemy,
+                    Random.Range(_enemyConfig.Speed.Min, _enemyConfig.Speed.Max),
+                    Vector2.zero),
                 projectileContainer,
-                respawner,
-                input);
-            return player;
+                _cameraView,
+                _camera);
+            enemy.Destroyed += () =>
+                _gameController.HandleDestroyOf(enemy, _enemyConfig.Score);
         }
 
-        private KeyboardInput CreateInput()
+        private void InitializeAsteroid(Asteroid asteroid, AsteroidConfig config)
         {
-            return new KeyboardInput();
+            asteroid.Initialize(
+                new Wraparound<Asteroid>(asteroid, _cameraView),
+                new ConsistentMovement(
+                    asteroid,
+                    Random.Range(config.Speed.Min, config.Speed.Max),
+                    Vector2.one.RandomDirection()),
+                config);
+            asteroid.Destroyed += () =>
+                _gameController.HandleDestroyOf(asteroid, asteroid.Config.Score);
         }
 
-        private void CreateObjectsHierarchy(
-            out Transform asteroids, 
-            out Transform ships,
-            out Transform projectiles)
+        private void InitializePauser(KeyboardInput input, PlayerShip player)
         {
-            var parent = new GameObject("_Dynamic").transform;
-            asteroids = new GameObject("Asteroids").transform;
-            ships = new GameObject("Ships").transform;
-            projectiles = new GameObject("Projectiles").transform;
-            asteroids.parent = ships.parent = projectiles.parent = parent;
+            GetComponent<Pauser>().Initialize(
+                input,
+                new PausableAudio(GetComponent<AudioSource>()),
+                player);
         }
 
         private void OnApplicationFocus(bool hasFocus)

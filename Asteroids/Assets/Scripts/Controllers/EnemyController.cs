@@ -6,17 +6,17 @@ namespace Asteroids
 {
     public class EnemyController<T> where T : IDestructible
     {
-        private readonly ISpawner<T> _spawner;
+        private readonly IPool<T> _pool;
         private readonly Bounds _viewArea;
         private readonly float _spawnOffset;
 
         public EnemyController(
-            ISpawner<T> spawner,
+            IPool<T> pool,
             ICoroutineStarter coroutineStarter,
             Bounds viewArea,
             Value spawnDelayInSeconds)
         {
-            _spawner = spawner;
+            _pool = pool;
             _viewArea = viewArea;
             _spawnOffset = 1f;
             coroutineStarter.StartCoroutine(SpawnRoutine(spawnDelayInSeconds));
@@ -27,7 +27,7 @@ namespace Asteroids
             for (; ; )
             {
                 yield return new WaitForSeconds(Random.Range(spawnDelay.Min, spawnDelay.Max));
-                _spawner.Spawn(1, GetSpawnOrigin());
+                _pool.Get(GetSpawnOrigin());
             }
         }
 

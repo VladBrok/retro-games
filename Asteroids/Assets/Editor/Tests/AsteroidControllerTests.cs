@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using NUnit.Framework;
 using NSubstitute;
@@ -11,37 +12,41 @@ namespace Editor.Tests
         [Test]
         public void Constructor_BigAsteroidCountIsZero_Throws()
         {
-            var spawner = Substitute.For<ISpawner<IDestructible>>();
+            var pools = new Dictionary<AsteroidType, IPool<IAsteroid>>();
             var origin = Substitute.For<ICenterProvider>();
             int bigAsteroidCount = 0;
 
-            TestDelegate create = () => 
-                new AsteroidController<IDestructible>(spawner, origin, bigAsteroidCount);
+            TestDelegate create = () =>
+                new AsteroidController<IAsteroid>(pools, origin, bigAsteroidCount);
 
             Assert.Throws<ArgumentOutOfRangeException>(create);
         }
 
         [Test]
-        public void OnAsteroidDestroyed_AllAsteroidsAreDestroyed_SpawnsNew()
+        public void OnObjectDestroyed_AllAsteroidsAreDestroyed_SpawnsNew()
         {
-            var spawner = Substitute.For<ISpawner<IDestructible>>();
+            var pools = new Dictionary<AsteroidType, IPool<IAsteroid>>();
+            pools.Add(AsteroidType.Big, Substitute.For<IPool<IAsteroid>>());
+            pools.Add(AsteroidType.Medium, Substitute.For<IPool<IAsteroid>>());
             var origin = Substitute.For<ICenterProvider>();
             int bigAsteroidCount = 1;
-            var controller = new AsteroidController<IDestructible>(
-                spawner, origin, bigAsteroidCount);
+            var controller = new AsteroidController<IAsteroid>(
+                pools, origin, bigAsteroidCount);
 
-            RaiseDestroyedEvent(controller.AsteroidsLeft, spawner);
+            RaiseObjectDestroyedEvent(controller.AsteroidsLeft, pools[AsteroidType.Big]);
 
-            spawner.Received().Spawn(bigAsteroidCount + 1, origin.Center);
+            pools[AsteroidType.Big].Received().Get(bigAsteroidCount + 1, origin.Center);
         }
 
-        private void RaiseDestroyedEvent(int count, ISpawner<IDestructible> spawner)
+        private void RaiseObjectDestroyedEvent(int count, IPool<IAsteroid> pool)
         {
             for (int i = 0; i < count; i++)
             {
-                spawner.Destroyed +=
-                    Raise.Event<Action<IDestructible>>(Substitute.For<IDestructible>());
+                pool.ObjectDestroyed +=
+                    Raise.Event<Action<IAsteroid>>(Substitute.For<IAsteroid>());
             }
         }
     }
+
+    public interface IAsteroid : IDestructible, ICenterProvider { }
 }

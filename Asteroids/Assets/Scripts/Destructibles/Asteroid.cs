@@ -7,8 +7,10 @@ using Random = UnityEngine.Random;
 namespace Asteroids
 {
     [RequireComponent(typeof(Rigidbody2D))]
+    [RequireComponent(typeof(SpriteRenderer))]
     public class Asteroid : ConsistentlyMovingObject<Asteroid>
     {
+        private SpriteRenderer _renderer;
         private AsteroidConfig _config;
 
         public AsteroidConfig Config
@@ -22,13 +24,16 @@ namespace Asteroids
             AsteroidConfig config)
         {
             base.Initialize(wraparound, movement);
+            _renderer = GetComponent<SpriteRenderer>();
             _config = config;
         }
 
-        public override void Deactivate()
+        public override void Activate()
         {
-            base.Deactivate();
+            base.Activate();
             RandomizeOffset();
+            int randomIndex = Random.Range(0, _config.Sprites.Count);
+            _renderer.sprite = _config.Sprites[randomIndex];
         }
 
         public void RandomizeOffset()
