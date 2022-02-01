@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Asteroids
 {
+    [DisallowMultipleComponent]
     public class Pauser : MonoBehaviour
     {
         private IPauseInput _input;

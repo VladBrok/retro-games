@@ -5,8 +5,8 @@ namespace Asteroids
     [CreateAssetMenu(menuName = "Config/Ship")]
     public class ShipConfig : ScriptableObject
     {
-        [SerializeField] private float _accelerationForce;
-        [SerializeField] private float _turnAngle;
+        [SerializeField, Range(0, 100)] private float _accelerationForce;
+        [SerializeField, Range(0, 360)] private float _turnAngle;
 
         public float AccelerationForce
         {

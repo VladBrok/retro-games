@@ -9,7 +9,7 @@ namespace Asteroids
     [DisallowMultipleComponent]
     public class Respawner : MonoBehaviour
     {
-        [SerializeField] private float _delayInSeconds;
+        [SerializeField, Range(0, 10)] private float _delayInSeconds;
         [SerializeField] private LayerMask _mask;
 
         private IActivable _target;

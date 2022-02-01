@@ -7,6 +7,7 @@ using UnityEngine.UI;
 
 namespace Asteroids
 {
+    [DisallowMultipleComponent]
     public class UI : MonoBehaviour
     {
         [SerializeField] private HorizontalLayoutGroup _livesPanel;

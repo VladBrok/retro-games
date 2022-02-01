@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 namespace Asteroids
 {
+    [DisallowMultipleComponent]
     public class StartMenu : MonoBehaviour
     {
         [SerializeField] private Button _newGameButton;

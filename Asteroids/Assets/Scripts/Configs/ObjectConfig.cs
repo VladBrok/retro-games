@@ -6,7 +6,7 @@ namespace Asteroids
     public class ObjectConfig : ScriptableObject
     {
         [SerializeField] private Value _speed;
-        [SerializeField] private int _score;
+        [SerializeField, Range(0, 1000)] private int _score;
 
         public Value Speed
         {

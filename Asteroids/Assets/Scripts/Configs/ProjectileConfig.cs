@@ -6,9 +6,9 @@ namespace Asteroids
     public class ProjectileConfig : ScriptableObject
     {
         [SerializeField] private Projectile _prefab;
-        [SerializeField] private float _fireRateInSeconds;
-        [SerializeField] private float _lifetimeInSeconds;
-        [SerializeField] private float _speed;
+        [SerializeField, Range(0, 100)] private float _fireRateInSeconds;
+        [SerializeField, Range(0, 100)] private float _lifetimeInSeconds;
+        [SerializeField, Range(0, 100)] private float _speed;
 
         public Projectile Prefab
         {

@@ -5,9 +5,9 @@ namespace Asteroids
     [CreateAssetMenu(menuName = "Config/Game")]
     public class GameConfig : ScriptableObject
     {
-        [SerializeField] private int _playerLives;
-        [SerializeField] private int _initialBigAsteroidCount;
-        [SerializeField] private float _pauseAfterPlayerDeathInSeconds;
+        [SerializeField, Range(0, 100)] private int _playerLives;
+        [SerializeField, Range(1, 100)] private int _initialBigAsteroidCount;
+        [SerializeField, Range(0, 10)] private float _pauseAfterPlayerDeathInSeconds;
 
         public int PlayerLives
         {
