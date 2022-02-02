@@ -4,17 +4,12 @@ using UnityEngine;
 
 namespace Asteroids
 {
-    [RequireComponent(typeof(SoundEffectsPlayer))]
     [RequireComponent(typeof(SpriteRenderer))]
     public class Projectile : ConsistentlyMovingObject<Projectile>
     {
-        private SoundEffectsPlayer _sfxPlayer;
-        private SpriteRenderer _renderer;
         private Func<Vector2> _getDirection;
-        private WaitWhile _waitWhileSoundPlaying;
         private float _lifetimeInSeconds;
         private float _lifetimeLeft;
-        private bool _destroying;
 
         public void Initialize(
             WraparoundBase<Projectile> wraparound, 
@@ -31,28 +26,12 @@ namespace Asteroids
         public override void Activate()
         {
             base.Activate();
-            _destroying = false;
             _lifetimeLeft = _lifetimeInSeconds;
             Movement.Direction = _getDirection();
         }
 
-        public override void Destroy()
-        {
-            StartCoroutine(DestroyRoutine());
-        }
-
-        protected override void Awake()
-        {
-            base.Awake();
-            _sfxPlayer = GetComponent<SoundEffectsPlayer>();
-            _renderer = GetComponent<SpriteRenderer>();
-            _waitWhileSoundPlaying = new WaitWhile(() => _sfxPlayer.IsPlaying);
-        }
-
         protected override void Update()
         {
-            if (_destroying) return;
-
             base.Update();
             UpdateLifetime();
         }
@@ -64,20 +43,6 @@ namespace Asteroids
             {
                 base.Destroy();
             }
-        }
-
-        private IEnumerator DestroyRoutine()
-        {
-            _destroying = true;
-            _sfxPlayer.PlayOneShot(SoundEffectType.Explosion);
-            _renderer.enabled = false;
-            Collider.enabled = false;
-
-            yield return _waitWhileSoundPlaying;
-
-            Collider.enabled = true;
-            _renderer.enabled = true;
-            base.Destroy();
         }
     }
 }

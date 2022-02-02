@@ -12,6 +12,7 @@ namespace Asteroids
     {
         private SpriteRenderer _renderer;
         private AsteroidConfig _config;
+        private ISoundEffectsPlayer _sfxPlayer;
 
         public AsteroidConfig Config
         {
@@ -21,11 +22,13 @@ namespace Asteroids
         public void Initialize(
             WraparoundBase<Asteroid> wraparound, 
             IMovement movement, 
-            AsteroidConfig config)
+            AsteroidConfig config,
+            ISoundEffectsPlayer sfxPlayer)
         {
             base.Initialize(wraparound, movement);
-            _renderer = GetComponent<SpriteRenderer>();
             _config = config;
+            _sfxPlayer = sfxPlayer;
+            _renderer = GetComponent<SpriteRenderer>();
         }
 
         public override void Activate()
@@ -36,7 +39,13 @@ namespace Asteroids
             _renderer.sprite = _config.Sprites[randomIndex];
         }
 
-        public void RandomizeOffset()
+        public override void Destroy()
+        {
+            _sfxPlayer.PlayOneShot(SoundEffectType.Explosion);
+            base.Destroy();
+        }
+
+        private void RandomizeOffset()
         {
             var randomOffset = new Vector3(
                 RangeWithRandomSign(_config.SpawnOffsetX.Min, _config.SpawnOffsetX.Max),

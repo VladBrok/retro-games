@@ -4,11 +4,12 @@ using UnityEngine;
 
 namespace Asteroids
 {
-    [Serializable]
-    public class SoundEffect
+    [CreateAssetMenu(menuName = "Config/SoundEffect")]
+    public class SoundEffectConfig : ScriptableObject
     {
         [SerializeField] private SoundEffectType _type;
         [SerializeField] private AudioClip[] _clips;
+        [SerializeField] [Range(0f, 1f)] private float _volumeScale;
 
         private ReadOnlyCollection<AudioClip> _readonlyClips;
 
@@ -26,6 +27,10 @@ namespace Asteroids
                 }
                 return _readonlyClips; 
             }
+        }
+        public float VolumeScale
+        {
+            get { return _volumeScale; }
         }
     }
 }

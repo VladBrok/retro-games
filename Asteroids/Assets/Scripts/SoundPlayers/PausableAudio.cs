@@ -2,7 +2,7 @@
 
 namespace Asteroids
 {
-    class PausableAudio : IPausable
+    public class PausableAudio : IPausable
     {
         private readonly AudioSource _source;
 

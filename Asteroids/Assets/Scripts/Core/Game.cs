@@ -7,9 +7,9 @@ using Random = UnityEngine.Random;
 
 namespace Asteroids
 {
-    [RequireComponent(typeof(Respawner))]
-    [RequireComponent(typeof(AudioSource))]
     [RequireComponent(typeof(Pauser))]
+    [RequireComponent(typeof(Respawner))]
+    [RequireComponent(typeof(ISoundEffectsPlayer))]
     [DisallowMultipleComponent]
     public sealed class Game : MonoBehaviour, ICoroutineStarter
     {        
@@ -22,12 +22,14 @@ namespace Asteroids
         [SerializeField] private EnemyShip _enemyPrefab;
 
         private GameController _gameController;
+        private ISoundEffectsPlayer _sfxPlayer;
         private Camera _camera;
         private Bounds _cameraView;
 
         private void Awake()
         {
             _gameController = new GameController(_gameConfig, _ui, _impactParticle);
+            _sfxPlayer = GetComponent<ISoundEffectsPlayer>();
             _camera = Camera.main;
             _cameraView = _camera.GetViewBounds2D();
 
@@ -82,7 +84,8 @@ namespace Asteroids
                 _cameraView,
                 projectileContainer,
                 respawner,
-                input);
+                input,
+                _sfxPlayer);
             return player;
         }
 
@@ -170,7 +173,8 @@ namespace Asteroids
                     Vector2.zero),
                 projectileContainer,
                 _cameraView,
-                _camera);
+                _camera,
+                _sfxPlayer);
             enemy.Destroyed += () =>
                 _gameController.HandleDestroyOf(enemy, _enemyConfig.Score);
         }
@@ -183,7 +187,8 @@ namespace Asteroids
                     asteroid,
                     Random.Range(config.Speed.Min, config.Speed.Max),
                     Vector2.one.RandomDirection()),
-                config);
+                config,
+                _sfxPlayer);
             asteroid.Destroyed += () =>
                 _gameController.HandleDestroyOf(asteroid, asteroid.Config.Score);
         }

@@ -7,17 +7,21 @@ namespace Asteroids
     public class EnemyShip : ConsistentlyMovingObject<EnemyShip>
     {
         private Camera _camera;
+        private ISoundEffectsPlayer _sfxPlayer;
 
         public void Initialize(
             WraparoundBase<EnemyShip> wraparound, 
             IMovement movement, 
             Transform projectileContainer,
             Bounds viewArea,
-            Camera camera)
+            Camera camera,
+            ISoundEffectsPlayer sfxPlayer)
         {
             base.Initialize(wraparound, movement);
 
             _camera = camera;
+            _sfxPlayer = sfxPlayer;
+
             var input = new AiInput();
             var weapon = GetComponent<ShipWeapon>();
             weapon.Initialize(
@@ -33,6 +37,12 @@ namespace Asteroids
             Vector2 movementDir = GetMovementDirection();
             Movement.Direction = movementDir;
             transform.rotation = Quaternion.LookRotation(Vector3.forward, movementDir);
+        }
+
+        public override void Destroy()
+        {
+            _sfxPlayer.PlayOneShot(SoundEffectType.Explosion);
+            base.Destroy();
         }
 
         private Vector2 GetMovementDirection()

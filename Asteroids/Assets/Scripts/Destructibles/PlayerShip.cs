@@ -14,13 +14,15 @@ namespace Asteroids
         private ShipEngine _engine;
         private Respawner _respawner;
         private ShipWeapon _weapon;
+        private ISoundEffectsPlayer _sfxPlayer;
 
         public void Initialize(
             WraparoundBase<PlayerShip> wraparound, 
             Bounds viewArea, 
             Transform projectileContainer,
             Respawner respawner,
-            KeyboardInput input)
+            KeyboardInput input,
+            ISoundEffectsPlayer sfxPlayer)
         {
             base.Initialize(wraparound);
             _animator = GetComponent<Animator>();
@@ -28,6 +30,7 @@ namespace Asteroids
 
             _engine = new ShipEngine(input, _rigidbody);
 
+            _sfxPlayer = sfxPlayer;
             _respawner = respawner;
             _respawner.Initialize(this, input, viewArea);
 
@@ -37,7 +40,7 @@ namespace Asteroids
                 projectileContainer,
                 p => new Wraparound<Projectile>(p, viewArea),
                 () => transform.up);
-            _weapon.Fired += () => _animator.SetTrigger("shot");
+            _weapon.Fired += () => _sfxPlayer.PlayOneShot(SoundEffectType.Shot);
         }
 
         public void Respawn()
@@ -58,6 +61,7 @@ namespace Asteroids
         public override void Destroy()
         {
             _animator.SetTrigger("destroy");
+            _sfxPlayer.PlayOneShot(SoundEffectType.Explosion);
             _engine.Stop();
             base.Destroy();
         }
