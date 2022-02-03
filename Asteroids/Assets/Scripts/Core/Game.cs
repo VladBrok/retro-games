@@ -102,7 +102,8 @@ namespace Asteroids
                             c.Prefab,
                             spawnPoint,
                             asteroidContainer,
-                            a => InitializeAsteroid(a, c)));
+                            a => InitializeAsteroid(a, c)),
+                    new AsteroidTypeEqualityComparer());
             return pools;
         }
 

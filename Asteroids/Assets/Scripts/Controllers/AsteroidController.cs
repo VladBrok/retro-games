@@ -16,7 +16,6 @@ namespace Asteroids
             int bigAsteroidCount)
         {
             if (bigAsteroidCount < 1) throw new ArgumentOutOfRangeException("bigAsteroidCount");
-
             _pools = pools;
             _spawnOrigin = spawnOrigin;
             _bigAsteroidCount = bigAsteroidCount;
