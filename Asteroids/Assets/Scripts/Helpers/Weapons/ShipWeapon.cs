@@ -16,7 +16,8 @@ namespace Asteroids
             IWeaponInput input, 
             Transform projectileContainer,
             Func<Projectile, WraparoundBase<Projectile>> getProjectileWraparound,
-            Func<Vector2> getProjectileDirection)
+            Func<Vector2> getProjectileDirection,
+            bool fireImmediately = false)
         {
             var projectilePool = new Pool<Projectile>(
                 _projectileConfig.Prefab,
@@ -27,7 +28,8 @@ namespace Asteroids
             _weapon = new Weapon<Projectile>(
                input, 
                projectilePool, 
-               _projectileConfig.FireRateInSeconds);
+               _projectileConfig.FireRateInSeconds,
+               fireImmediately);
             _weapon.Fired += () => Fired();
         }
 

@@ -46,7 +46,7 @@ namespace Editor.Tests
             Assert.IsFalse(wasRaised);
         }
 
-        private Weapon<int> CreateDefaultWeapon(bool inputFireReturns)
+        private Weapon<int> CreateDefaultWeapon(bool inputFireReturns = false)
         {
             var input = Substitute.For<IWeaponInput>();
             var pool = Substitute.For<IPool<int>>();

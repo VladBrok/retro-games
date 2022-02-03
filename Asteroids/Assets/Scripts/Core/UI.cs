@@ -12,9 +12,9 @@ namespace Asteroids
     {
         [SerializeField] private HorizontalLayoutGroup _livesPanel;
         [SerializeField] private Image _lifePrefab;
-        [SerializeField] private Text _scoreText;
-        [SerializeField] private Text _highScoreText;
-        [SerializeField] private Text _gameOverText;
+        [SerializeField] private Text _scoreValue;
+        [SerializeField] private Text _highScoreValue;
+        [SerializeField] private Canvas _gameOverCanvas;
         [SerializeField] private Button _restartButton;
 
         private ILifeController _player;
@@ -35,18 +35,18 @@ namespace Asteroids
                 Enumerable
                     .Range(0, player.CurrentLives)
                     .Select(_ => Instantiate(_lifePrefab, _livesPanel.transform)));
-            
-            SetGameOverActive(false);
+
+            _gameOverCanvas.gameObject.SetActive(false);
         }
 
         public void UpdateScore(int score)
         {
-            _scoreText.text = "Score: " + score;
+            _scoreValue.text = score.ToString();
         }
 
         public void UpdateHighScore(int highScore)
         {
-            _highScoreText.text = "HighScore: " + highScore;
+            _highScoreValue.text = highScore.ToString();
         }
 
         private void OnPlayerLostLife()
@@ -56,13 +56,7 @@ namespace Asteroids
 
         private void OnPlayerDead()
         {
-            SetGameOverActive(true);
-        }
-
-        private void SetGameOverActive(bool active)
-        {
-            _gameOverText.gameObject.SetActive(active);
-            _restartButton.gameObject.SetActive(active);
+            _gameOverCanvas.gameObject.SetActive(true);
         }
     }
 }

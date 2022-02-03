@@ -9,12 +9,16 @@ namespace Asteroids
         private readonly float _fireRate;
         private float _cooldown;
 
-        public Weapon(IWeaponInput input, IPool<T> projectilePool, float fireRate)
+        public Weapon(
+            IWeaponInput input, 
+            IPool<T> projectilePool, 
+            float fireRate,
+            bool fireImmediately = false)
         {
             _input = input;
             _projectilePool = projectilePool;
             _fireRate = fireRate;
-            _cooldown = fireRate;
+            _cooldown = fireImmediately ? 0f : fireRate;
         }
 
         public event Action Fired = delegate { };
