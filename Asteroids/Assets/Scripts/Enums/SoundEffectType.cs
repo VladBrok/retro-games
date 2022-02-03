@@ -5,5 +5,6 @@ namespace Asteroids
     {
         Explosion,
         Shot,
+        LaserShot
     }
 }

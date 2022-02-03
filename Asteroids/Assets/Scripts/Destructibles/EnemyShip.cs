@@ -29,6 +29,7 @@ namespace Asteroids
                 projectileContainer,
                 p => new NoWraparound<Projectile>(p, viewArea),
                 () => Vector2.one.RandomDirection());
+            weapon.Fired += () => _sfxPlayer.PlayOneShot(SoundEffectType.LaserShot);
         }
 
         public override void Activate()

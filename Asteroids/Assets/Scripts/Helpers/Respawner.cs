@@ -1,7 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 using Asteroids.Extensions;
-using System;
 using Random = UnityEngine.Random;
 
 namespace Asteroids
@@ -44,10 +44,10 @@ namespace Asteroids
         private IEnumerator RespawnRoutine(Vector2 position)
         {
             _target.Deactivate();
-            while (!CanSpawnAt(position))
+            do
             {
                 yield return _waitForRespawnDelay;
-            }
+            } while (!CanSpawnAt(position));
             _target.Center = position;
             _target.Activate();
         }
