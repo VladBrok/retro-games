@@ -28,21 +28,26 @@ namespace Asteroids
             base.Initialize(wraparound, movement);
             _config = config;
             _sfxPlayer = sfxPlayer;
-            _renderer = GetComponent<SpriteRenderer>();
         }
 
         public override void Activate()
         {
             base.Activate();
             RandomizeOffset();
-            int randomIndex = Random.Range(0, _config.Sprites.Count);
-            _renderer.sprite = _config.Sprites[randomIndex];
+            int randIndex = Random.Range(0, _config.Sprites.Count);
+            _renderer.sprite = _config.Sprites[randIndex];
         }
 
         public override void Destroy()
         {
             _sfxPlayer.PlayOneShot(SoundEffectType.Explosion);
             base.Destroy();
+        }
+
+        protected override void Awake()
+        {
+            base.Awake();
+            _renderer = GetComponent<SpriteRenderer>();
         }
 
         private void RandomizeOffset()

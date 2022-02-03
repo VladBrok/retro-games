@@ -34,7 +34,7 @@ namespace Asteroids
         public void Restart()
         {
             _saveSystem.Save(_data);
-            SceneManager.LoadSceneAsync((int)Scene.Main);
+            SceneManager.LoadSceneAsync((int)Scene.Game);
             Time.timeScale = 1f;
         }
 

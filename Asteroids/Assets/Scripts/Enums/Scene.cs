@@ -3,7 +3,7 @@ namespace Asteroids
 {
     public enum Scene
     {
-        Start,
-        Main
+        MainMenu,
+        Game
     }
 }
