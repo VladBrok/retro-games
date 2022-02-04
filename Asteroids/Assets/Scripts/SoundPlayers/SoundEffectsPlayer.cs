@@ -37,8 +37,7 @@ namespace Asteroids
         {
             SoundEffectType type = _pendingClips.Dequeue();
             SoundEffectConfig config = _effects.First(e => e.Type == type);
-            int randomIndex = Random.Range(0, config.Clips.Count);
-            _audioSource.PlayOneShot(config.Clips[randomIndex], config.VolumeScale);
+            _audioSource.PlayOneShot(config.Clips.TakeRandom(), config.VolumeScale);
         }
 
         private void OnValidate()

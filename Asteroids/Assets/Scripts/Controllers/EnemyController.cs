@@ -26,7 +26,7 @@ namespace Asteroids
         {
             for (; ; )
             {
-                yield return new WaitForSeconds(Random.Range(spawnDelay.Min, spawnDelay.Max));
+                yield return new WaitForSeconds(spawnDelay.Randomize());
                 _pool.Get(GetSpawnOrigin());
             }
         }

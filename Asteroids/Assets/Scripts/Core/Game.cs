@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Asteroids.Extensions;
-using Random = UnityEngine.Random;
 
 namespace Asteroids
 {
@@ -170,7 +169,7 @@ namespace Asteroids
                 new Wraparound<EnemyShip>(enemy, _cameraView),
                 new ConsistentMovement(
                     enemy,
-                    Random.Range(_enemyConfig.Speed.Min, _enemyConfig.Speed.Max),
+                    _enemyConfig.Speed.Randomize(),
                     Vector2.zero),
                 projectileContainer,
                 _cameraView,
@@ -186,7 +185,7 @@ namespace Asteroids
                 new Wraparound<Asteroid>(asteroid, _cameraView),
                 new ConsistentMovement(
                     asteroid,
-                    Random.Range(config.Speed.Min, config.Speed.Max),
+                    config.Speed.Randomize(),
                     Vector2.one.RandomDirection()),
                 config,
                 _sfxPlayer);

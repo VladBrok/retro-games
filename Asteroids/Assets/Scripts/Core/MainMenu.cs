@@ -25,8 +25,7 @@ namespace Asteroids
         {
             for (int i = 0; i < _asteroidsToSpawn; i++)
             {
-                int randIndex = Random.Range(0, _asteroidConfigs.Length);
-                var config = _asteroidConfigs[randIndex];
+                var config = _asteroidConfigs.TakeRandom();
                 Asteroid asteroid = Instantiate(
                     config.Prefab,
                     new Vector2(

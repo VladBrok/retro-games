@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Asteroids
 {
@@ -22,6 +23,11 @@ namespace Asteroids
         public float Max
         {
             get { return _max; }
+        }
+
+        public float Randomize()
+        {
+            return Random.Range(_min, _max);
         }
     }
 }

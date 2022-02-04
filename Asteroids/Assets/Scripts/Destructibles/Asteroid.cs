@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 using Asteroids.Extensions;
-using Random = UnityEngine.Random;
 
 namespace Asteroids
 {
@@ -34,8 +31,7 @@ namespace Asteroids
         {
             base.Activate();
             RandomizeOffset();
-            int randIndex = Random.Range(0, _config.Sprites.Count);
-            _renderer.sprite = _config.Sprites[randIndex];
+            _renderer.sprite = _config.Sprites.TakeRandom();
         }
 
         public override void Destroy()
@@ -53,14 +49,9 @@ namespace Asteroids
         private void RandomizeOffset()
         {
             var randomOffset = new Vector3(
-                RangeWithRandomSign(_config.SpawnOffsetX.Min, _config.SpawnOffsetX.Max),
-                RangeWithRandomSign(_config.SpawnOffsetY.Min, _config.SpawnOffsetY.Max));
+                _config.SpawnOffsetX.Randomize().RandomizeSign(),
+                _config.SpawnOffsetY.Randomize().RandomizeSign());
             transform.position += randomOffset;
-        }
-
-        private float RangeWithRandomSign(float min, float max)
-        {
-            return Random.Range(min, max).RandomizeSign();
         }
     }
 }
