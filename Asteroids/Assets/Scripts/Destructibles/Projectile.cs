@@ -41,7 +41,7 @@ namespace Asteroids
             _lifetimeLeft -= Time.deltaTime;
             if (_lifetimeLeft <= 0f)
             {
-                base.Destroy();
+                Destroy();
             }
         }
     }
