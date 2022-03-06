@@ -19,13 +19,8 @@ namespace Arkanoid
         private void Start()
         {
             Brick.Destroyed += OnBrickDestroyed;
-            _brickCount = _bricksInEachLevelPrefabs
-                .Select(b => b.GetComponentsInChildren<Brick>().Count())
-                .ToArray();
-            Debug.Assert(
-                Array.TrueForAll(_brickCount, c => c > 0), 
-                "There must be at least one brick in each level.");
-            StartCoroutine(UpdateLevelRoutine());
+            _brickCount = GetBrickCountForEachLevel().ToArray();
+            UpdateLevel();
         }
 
         private void OnDestroy()
@@ -37,26 +32,70 @@ namespace Arkanoid
         {
             Debug.Assert(
                 _bricksInEachLevelPrefabs != null && _bricksInEachLevelPrefabs.Count > 0, 
-                "Bricks in level are not assigned.");
+                "Bricks in each level are not assigned.");
+            Debug.Assert(
+                GetBrickCountForEachLevel().All(c => c > 0),
+                "There must be at least one brick in each level.");
+        }
+
+        private IEnumerable<int> GetBrickCountForEachLevel()
+        {
+            return _bricksInEachLevelPrefabs
+                       .Select(b => b.GetComponentsInChildren<Brick>().Count());
         }
 
         private void OnBrickDestroyed()
         {
-            if (--_brickCount[_currentLevel - 1] == 0)
+            _brickCount[_currentLevel - 1]--;
+            if (AllBricksInLevelDestroyed())
             {
-                StartCoroutine(UpdateLevelRoutine());
+                if (CurrentLevelIsLast())
+                {
+                    // TODO: Add an ability to hide paddle and ball instead of
+                    // resetting them and deactivating a paddle.
+                    ResetPaddleAndBall();
+                    _paddle.gameObject.SetActive(false);
+                    _ui.ShowVictoryCanvas();
+                    return;
+                }
+                UpdateLevel();
             }
+        }
+
+        private bool AllBricksInLevelDestroyed()
+        {
+            return _brickCount[_currentLevel - 1] == 0;
+        }
+
+        private bool CurrentLevelIsLast()
+        {
+            return _currentLevel == _brickCount.Length;
+        }
+
+        private void UpdateLevel()
+        {
+            _currentLevel++;
+            ResetPaddleAndBall();
+            StartCoroutine(UpdateLevelRoutine());
         }
 
         private IEnumerator UpdateLevelRoutine()
         {
+            _paddle.gameObject.SetActive(false);
+            yield return _ui.UpdateLevelRoutine(_currentLevel);
+            InstantiateNewBricks();
+            _paddle.gameObject.SetActive(true);
+        }
+
+        private void ResetPaddleAndBall()
+        {
             _paddle.Reset();
             _ball.Reset();
-            _paddle.gameObject.SetActive(false);
-            _currentLevel++;
-            yield return _ui.UpdateLevelRoutine(_currentLevel);
+        }
+
+        private void InstantiateNewBricks()
+        {
             Instantiate(_bricksInEachLevelPrefabs[_currentLevel - 1]);
-            _paddle.gameObject.SetActive(true);
         }
     }
 }

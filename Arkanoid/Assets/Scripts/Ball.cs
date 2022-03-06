@@ -76,9 +76,9 @@ namespace Arkanoid
             _body.velocity = direction * _speed;
         }
 
-        private float AdjustIfSmall(float value)
+        private float AdjustIfSmall(float directionAxis)
         {
-            return Mathf.Abs(value) <= 0.001f ? _directionOffset * RandomSign() : value;
+            return Mathf.Abs(directionAxis) <= 0.001f ? _directionOffset * RandomSign() : directionAxis;
         }
 
         private void ToggleEnabled(bool enabled)

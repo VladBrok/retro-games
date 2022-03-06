@@ -13,6 +13,7 @@ namespace Arkanoid
         [SerializeField] private Text _scoreText;
         [SerializeField] private Text _levelText;
         [SerializeField] private Canvas _gameOverCanvas;
+        [SerializeField] private Canvas _victoryCanvas;
         [SerializeField] private Canvas _levelCanvas;
         [SerializeField] private List<Image> _lives;
 
@@ -23,6 +24,11 @@ namespace Arkanoid
         {
             _levelText.text = level.ToString();
             yield return ShowLevelCanvasRoutine();
+        }
+
+        public void ShowVictoryCanvas()
+        {
+            _victoryCanvas.gameObject.SetActive(true);
         }
 
         private void Awake()
