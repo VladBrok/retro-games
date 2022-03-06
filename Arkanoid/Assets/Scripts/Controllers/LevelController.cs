@@ -44,7 +44,7 @@ namespace Arkanoid
                        .Select(b => b.GetComponentsInChildren<Brick>().Count());
         }
 
-        private void OnBrickDestroyed()
+        private void OnBrickDestroyed(BrickDestroyedData _)
         {
             _brickCount[_currentLevel - 1]--;
             if (AllBricksInLevelDestroyed())

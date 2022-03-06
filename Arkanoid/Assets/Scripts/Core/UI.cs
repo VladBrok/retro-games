@@ -18,6 +18,7 @@ namespace Arkanoid
         [SerializeField] private List<Image> _lives;
 
         private int _score;
+        private int _lifeIndex;
         private WaitForSeconds _waitForLevelDisplay;
 
         public IEnumerator UpdateLevelRoutine(int level)
@@ -31,28 +32,36 @@ namespace Arkanoid
             _victoryCanvas.gameObject.SetActive(true);
         }
 
+        public void AddOneLife()
+        {
+            if (_lifeIndex + 1 >= _lives.Count) return;
+
+            _lives[++_lifeIndex].gameObject.SetActive(true);
+        }
+
         private void Awake()
         {
-            Brick.Destroyed += UpdateScore;
-            _floor.BallDead += UpdateLives;
+            Brick.Destroyed += OnBrickDestroyed;
+            _floor.BallDead += OnBallDestroyed;
             _waitForLevelDisplay = new WaitForSeconds(_levelDisplayTimeInSeconds);
+            _lifeIndex = _lives.Count - 1;
         }
 
         private void OnDestroy()
         {
-            Brick.Destroyed -= UpdateScore;
+            Brick.Destroyed -= OnBrickDestroyed;
         }
 
-        private void UpdateScore()
+        private void OnBrickDestroyed(BrickDestroyedData _)
         {
             _score += 1;
             _scoreText.text = _score.ToString();
         }
 
-        private void UpdateLives()
+        private void OnBallDestroyed()
         {
             RemoveOneLife();
-            if (_lives.Count == 0)
+            if (_lifeIndex < 0)
             {
                 _gameOverCanvas.gameObject.SetActive(true);
                 _paddle.gameObject.SetActive(false);
@@ -61,9 +70,7 @@ namespace Arkanoid
 
         private void RemoveOneLife()
         {
-            int last = _lives.Count - 1;
-            Destroy(_lives[last]);
-            _lives.RemoveAt(last);
+            _lives[_lifeIndex--].gameObject.SetActive(false);
         }
 
         private IEnumerator ShowLevelCanvasRoutine()

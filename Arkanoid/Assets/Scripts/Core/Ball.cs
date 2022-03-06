@@ -3,6 +3,7 @@
 namespace Arkanoid
 {
     [RequireComponent(typeof(Rigidbody2D))]
+    [RequireComponent(typeof(Collider2D))]
     public class Ball : MonoBehaviour
     {
         [SerializeField] [Range(100f, 1000f)] private float _launchForce;
@@ -13,6 +14,7 @@ namespace Arkanoid
         private Vector2 _startPosition;
         private Transform _parent;
         private Vector2 _pausedVelocity;
+        private Collider2D _collider;
 
         public void Launch()
         {
@@ -47,6 +49,7 @@ namespace Arkanoid
         private void Awake()
         {
             _body = GetComponent<Rigidbody2D>();
+            _collider = GetComponent<Collider2D>();
             _startPosition = transform.position;
             _parent = transform.parent;
             ToggleEnabled(false);
@@ -85,6 +88,7 @@ namespace Arkanoid
         {
             _body.isKinematic = !enabled;
             this.enabled = enabled;
+            _collider.enabled = enabled;
         }
 
         private float RandomSign()

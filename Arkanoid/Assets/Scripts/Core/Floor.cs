@@ -15,11 +15,13 @@ namespace Arkanoid
         {
             Debug.Assert(
                 GetComponent<Collider2D>().isTrigger,
-                "Collider of the " + gameObject.name + " should be a trigger.");
+                gameObject.name + " should have a trigger collider.");
         }
 
-        private void OnTriggerEnter2D(Collider2D _)
+        private void OnTriggerEnter2D(Collider2D other)
         {
+            if (!other.GetComponent<Ball>()) return;
+
             _paddle.Reset();
             _ball.Reset();
             BallDead.Invoke();
