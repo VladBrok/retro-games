@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Arkanoid.Pickups;
+using Random = UnityEngine.Random;
 
 namespace Arkanoid.Controllers
 {
@@ -9,6 +11,9 @@ namespace Arkanoid.Controllers
         [SerializeField] private List<PickupBase> _pickupPrefabs;
         [SerializeField] private PickupConfig _config;
         [SerializeField] [Range(1f, 100f)] private float _spawnChance;
+
+        public Action<PickupBase> PickupCreated = delegate { };
+        public Action<PickupBase> PickupDestroyed = delegate { };
 
         private void Awake()
         {
@@ -24,19 +29,26 @@ namespace Arkanoid.Controllers
         {
             if (Random.Range(1f, 100f) <= _spawnChance)
             {
-                PickupBase pickup = Instantiate(
-                    _pickupPrefabs[Random.Range(0, _pickupPrefabs.Count)], 
-                    data.Position, 
-                    Quaternion.identity);
-                pickup.Initialize(_config);
+                PickupBase pickup = CreatePickup(data.Position);
                 pickup.TriggerEntered += OnPickupTriggerEntered;
             }
         }
 
-        private void OnPickupTriggerEntered(PickupBase target)
+        private PickupBase CreatePickup(Vector2 position)
         {
-            // TODO: Create pool
-            Destroy(target.gameObject);
+            PickupBase pickup = Instantiate(
+                _pickupPrefabs[Random.Range(0, _pickupPrefabs.Count)],
+                position,
+                Quaternion.identity);
+            pickup.Initialize(_config);
+            PickupCreated(pickup);
+            return pickup;
+        }
+
+        private void OnPickupTriggerEntered(PickupBase obj)
+        {
+            Destroy(obj.gameObject);
+            PickupDestroyed(obj);
         }
     }
 }

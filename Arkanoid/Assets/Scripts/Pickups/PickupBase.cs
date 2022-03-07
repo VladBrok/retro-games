@@ -9,13 +9,30 @@ namespace Arkanoid.Pickups
     {
         public event Action<PickupBase> TriggerEntered = delegate { };
 
+        private Rigidbody2D _body;
+        private float _fallForce;
+
         public virtual void Initialize(PickupConfig config)
         {
-            GetComponent<Rigidbody2D>().AddForce(Vector2.down * config.FallForce);
+            _fallForce = config.FallForce;
+            StartFalling();
+        }
+
+        public void Pause()
+        {
+            _body.isKinematic = true;
+            _body.velocity = Vector2.zero;
+        }
+
+        public void Unpause()
+        {
+            _body.isKinematic = false;
+            StartFalling();
         }
 
         protected virtual void Awake()
         {
+            _body = GetComponent<Rigidbody2D>();
             Debug.Assert(
                 GetComponent<Collider2D>().isTrigger, 
                 gameObject.name + " should have a trigger collider.");
@@ -29,6 +46,11 @@ namespace Arkanoid.Pickups
             if (!other.GetComponent<Paddle>()) return;
 
             ApplyEffect();
+        }
+
+        private void StartFalling()
+        {
+            _body.AddForce(Vector2.down * _fallForce);            
         }
     }
 }
