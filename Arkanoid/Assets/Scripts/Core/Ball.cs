@@ -7,12 +7,11 @@ namespace Arkanoid
     public class Ball : MonoBehaviour
     {
         [SerializeField] [Range(100f, 1000f)] private float _launchForce;
-        [SerializeField] [Range(0f, 1f)] private float _directionOffset;
+        [SerializeField] [Range(0.1f, 1f)] private float _directionOffset;
         [SerializeField] [Range(0f, 10f)] private float _speed;
 
         private Rigidbody2D _body;
         private Vector2 _startPosition;
-        private Transform _parent;
         private Vector2 _pausedVelocity;
         private CircleCollider2D _collider;
 
@@ -23,6 +22,7 @@ namespace Arkanoid
         public Vector2 Position
         {
             get { return transform.position; }
+            set { transform.position = value; }
         }
         public Vector2 MovementDirection
         {
@@ -36,22 +36,18 @@ namespace Arkanoid
         public void Launch()
         {
             ToggleEnabled(true);
-            transform.parent = null;
             _body.AddForce(Vector2.up * _launchForce);
         }
 
         public void Reset()
         {
-            transform.parent = _parent;
             transform.position = _startPosition;
-            _body.velocity = Vector2.zero;
             ToggleEnabled(false);
         }
 
         public void Pause()
         {
             _pausedVelocity = _body.velocity;
-            _body.velocity = Vector2.zero;
             ToggleEnabled(false);
         }
 
@@ -68,7 +64,6 @@ namespace Arkanoid
             _body = GetComponent<Rigidbody2D>();
             _collider = GetComponent<CircleCollider2D>();
             _startPosition = transform.position;
-            _parent = transform.parent;
             ToggleEnabled(false);
         }
 
@@ -98,16 +93,22 @@ namespace Arkanoid
 
         private float AdjustIfSmall(float directionAxis)
         {
-            return Mathf.Abs(directionAxis) <= 0.001f 
-                   ? _directionOffset * RandomSign() 
-                   : directionAxis;
+            if (Mathf.Abs(directionAxis) <= 0.001f)
+            {
+                directionAxis = _directionOffset * RandomSign();
+            }
+            return directionAxis;
         }
 
         private void ToggleEnabled(bool enabled)
         {
             _body.isKinematic = !enabled;
-            this.enabled = enabled;
             _collider.enabled = enabled;
+            this.enabled = enabled;
+            if (!enabled)
+            {
+                _body.velocity = Vector2.zero;
+            }
         }
 
         private float RandomSign()

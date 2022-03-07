@@ -39,6 +39,10 @@ namespace Arkanoid
         private void Update()
         {
             _direction = GetDirectionFromInput();
+            if (!_ballLaunched)
+            {
+                PutBallOnPaddle();
+            }
             if (ShouldLaunchBall())
             {
                 LaunchBall();
@@ -66,6 +70,13 @@ namespace Arkanoid
         {
             _ballLaunched = true;
             _ball.Launch();
+        }
+
+        private void PutBallOnPaddle()
+        {
+            _ball.Position = new Vector2(
+                _body.position.x,
+                _ball.Position.y);
         }
     }
 }
