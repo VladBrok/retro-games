@@ -4,7 +4,7 @@ using Arkanoid.Pickups;
 
 namespace Arkanoid.Controllers
 {
-    public sealed class GameStateController : MonoBehaviour
+    public class GamePauser : MonoBehaviour
     {
         [SerializeField] private Paddle _paddle;
         [SerializeField] private Ball _ball;
@@ -24,11 +24,6 @@ namespace Arkanoid.Controllers
             _paddle.Unpause();
             _ball.Unpause();
             _pickups.ForEach(p => p.Unpause());
-        }
-
-        public void Quit()
-        {
-            Application.Quit();
         }
 
         private void Awake()
