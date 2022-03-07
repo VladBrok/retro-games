@@ -7,10 +7,20 @@ namespace Arkanoid
     {
         public static event Action<BrickDestroyedData> Destroyed = delegate { };
 
-        protected override void OnCollisionEnter2D(Collision2D _)
+        protected override void HandleCollision()
         {
             Destroy(gameObject);
             Destroyed.Invoke(new BrickDestroyedData { Position = transform.position });
+        }
+
+        private void OnCollisionEnter2D(Collision2D _)
+        {
+            HandleCollision();
+        }
+
+        private void OnTriggerEnter2D(Collider2D _)
+        {
+            HandleCollision();
         }
     }
 

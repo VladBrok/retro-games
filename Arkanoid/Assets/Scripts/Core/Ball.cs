@@ -3,7 +3,7 @@
 namespace Arkanoid
 {
     [RequireComponent(typeof(Rigidbody2D))]
-    [RequireComponent(typeof(Collider2D))]
+    [RequireComponent(typeof(CircleCollider2D))]
     public class Ball : MonoBehaviour
     {
         [SerializeField] [Range(100f, 1000f)] private float _launchForce;
@@ -14,7 +14,24 @@ namespace Arkanoid
         private Vector2 _startPosition;
         private Transform _parent;
         private Vector2 _pausedVelocity;
-        private Collider2D _collider;
+        private CircleCollider2D _collider;
+
+        public bool Bounceable 
+        {
+            set { _collider.isTrigger = !value; }
+        }
+        public Vector2 Position
+        {
+            get { return transform.position; }
+        }
+        public Vector2 MovementDirection
+        {
+            get { return _body.velocity.normalized; }
+        }
+        public float Radius
+        {
+            get { return _collider.radius; }
+        }
 
         public void Launch()
         {
@@ -49,7 +66,7 @@ namespace Arkanoid
         private void Awake()
         {
             _body = GetComponent<Rigidbody2D>();
-            _collider = GetComponent<Collider2D>();
+            _collider = GetComponent<CircleCollider2D>();
             _startPosition = transform.position;
             _parent = transform.parent;
             ToggleEnabled(false);
@@ -81,7 +98,9 @@ namespace Arkanoid
 
         private float AdjustIfSmall(float directionAxis)
         {
-            return Mathf.Abs(directionAxis) <= 0.001f ? _directionOffset * RandomSign() : directionAxis;
+            return Mathf.Abs(directionAxis) <= 0.001f 
+                   ? _directionOffset * RandomSign() 
+                   : directionAxis;
         }
 
         private void ToggleEnabled(bool enabled)

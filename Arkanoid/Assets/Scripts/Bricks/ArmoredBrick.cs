@@ -4,7 +4,7 @@ namespace Arkanoid
 {
     public class ArmoredBrick : BrickBase
     {
-        protected override void OnCollisionEnter2D(Collision2D _)
+        protected override void HandleCollision()
         {
         }
     }
