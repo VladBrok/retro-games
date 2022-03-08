@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -41,7 +40,7 @@ namespace Arkanoid.Controllers
         private IEnumerable<int> GetBrickCountForEachLevel()
         {
             return _bricksInEachLevelPrefabs
-                       .Select(b => b.GetComponentsInChildren<Brick>().Count());
+                       .Select(b => b.GetComponentsInChildren<Brick>().Length);
         }
 
         private void OnBrickDestroyed(BrickDestroyedData _)
@@ -51,10 +50,10 @@ namespace Arkanoid.Controllers
             {
                 if (CurrentLevelIsLast())
                 {
-                    // TODO: Add an ability to hide paddle and ball instead of
-                    // resetting them and deactivating a paddle.
+                    // TODO: Add an ability to hide paddle and ball.
                     ResetPaddleAndBall();
-                    _paddle.gameObject.SetActive(false);
+                    _paddle.Pause();
+                    _ball.Pause();
                     _ui.ShowVictoryCanvas();
                     return;
                 }
@@ -81,10 +80,12 @@ namespace Arkanoid.Controllers
 
         private IEnumerator UpdateLevelRoutine()
         {
-            _paddle.gameObject.SetActive(false);
+            _paddle.Pause();
+            _ball.Pause();
             yield return _ui.UpdateLevelRoutine(_currentLevel);
             InstantiateNewBricks();
-            _paddle.gameObject.SetActive(true);
+            _paddle.Unpause();
+            _paddle.Unpause();
         }
 
         private void ResetPaddleAndBall()
