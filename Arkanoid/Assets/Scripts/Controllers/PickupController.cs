@@ -41,14 +41,14 @@ namespace Arkanoid.Controllers
                 position,
                 Quaternion.identity);
             pickup.Initialize(_config);
-            PickupCreated(pickup);
+            PickupCreated.Invoke(pickup);
             return pickup;
         }
 
         private void OnPickupTriggerEntered(PickupBase obj)
         {
             Destroy(obj.gameObject);
-            PickupDestroyed(obj);
+            PickupDestroyed.Invoke(obj);
         }
     }
 }
