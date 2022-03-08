@@ -8,12 +8,12 @@ namespace Arkanoid
     {
         [SerializeField] [Range(100f, 1000f)] private float _launchForce;
         [SerializeField] [Range(0.1f, 1f)] private float _directionOffset;
-        [SerializeField] [Range(0f, 10f)] private float _speed;
 
         private Rigidbody2D _body;
         private Vector2 _startPosition;
         private Vector2 _pausedVelocity;
         private CircleCollider2D _collider;
+        private float _speed;
 
         public bool Bounceable 
         {
@@ -31,6 +31,11 @@ namespace Arkanoid
         public float Radius
         {
             get { return _collider.radius; }
+        }
+
+        public void Initialize(float speed)
+        {
+            _speed = speed;
         }
 
         public void Launch()
