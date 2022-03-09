@@ -10,6 +10,7 @@ namespace Arkanoid.Pickups
 
         private WaitForSeconds _waitForEffectDuration;
         private Paddle _paddle;
+        private MonoBehaviour _coroutineRunner;
 
         private Vector3 PaddleScale
         {
@@ -21,6 +22,7 @@ namespace Arkanoid.Pickups
         {
             base.Initialize(config);
             _paddle = config.Paddle;
+            _coroutineRunner = config.CoroutineRunner;
         }
 
         protected override void Awake()
@@ -31,7 +33,7 @@ namespace Arkanoid.Pickups
 
         protected override void ApplyEffect()
         {
-            _paddle.StartCoroutine(ExpandTemporarly());
+            _coroutineRunner.StartCoroutine(ExpandTemporarly());
         }
 
         private IEnumerator ExpandTemporarly()

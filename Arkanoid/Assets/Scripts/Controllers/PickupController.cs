@@ -12,12 +12,15 @@ namespace Arkanoid.Controllers
         [SerializeField] private PickupConfig _config;
         [SerializeField] [Range(1f, 100f)] private float _spawnChance;
 
-        public Action<PickupBase> PickupCreated = delegate { };
+        private Pool<PickupBase> _pool;
+
+        public Action<PickupBase> PickupSpawned = delegate { };
         public Action<PickupBase> PickupDestroyed = delegate { };
 
         private void Awake()
         {
             Brick.Destroyed += OnBrickDestroyed;
+            _pool = new Pool<PickupBase>(InitializePickup);
         }
 
         private void OnDestroy()
@@ -29,25 +32,28 @@ namespace Arkanoid.Controllers
         {
             if (Random.Range(1f, 100f) <= _spawnChance)
             {
-                PickupBase pickup = CreatePickup(data.Position);
-                pickup.TriggerEntered += OnPickupTriggerEntered;
+                SpawnPickup(data.Position);
             }
         }
 
-        private PickupBase CreatePickup(Vector2 position)
+        private void InitializePickup(PickupBase obj)
         {
-            PickupBase pickup = Instantiate(
+            obj.TriggerEntered += OnPickupTriggerEntered;
+            obj.Initialize(_config);
+        }
+
+        private void SpawnPickup(Vector2 position)
+        {
+            PickupBase pickup = _pool.Get(
                 _pickupPrefabs[Random.Range(0, _pickupPrefabs.Count)],
-                position,
-                Quaternion.identity);
-            pickup.Initialize(_config);
-            PickupCreated.Invoke(pickup);
-            return pickup;
+                position);
+            pickup.StartFalling();
+            PickupSpawned.Invoke(pickup);
         }
 
         private void OnPickupTriggerEntered(PickupBase obj)
         {
-            Destroy(obj.gameObject);
+            _pool.Return(obj);
             PickupDestroyed.Invoke(obj);
         }
     }

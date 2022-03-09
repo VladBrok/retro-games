@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace Arkanoid
 {
-    public class UI : MonoBehaviour
+    public class MainUI : MonoBehaviour
     {
         [SerializeField] [Range(0.1f, 5f)] private float _levelDisplayTimeInSeconds;
         [SerializeField] private Floor _floor;

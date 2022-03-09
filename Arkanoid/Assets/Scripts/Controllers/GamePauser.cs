@@ -29,11 +29,11 @@ namespace Arkanoid.Controllers
         private void Awake()
         {
             _pickups = new List<PickupBase>();
-            _pickupController.PickupCreated += OnPickupCreated;
+            _pickupController.PickupSpawned += OnPickupSpawned;
             _pickupController.PickupDestroyed += OnPickupDestroyed;
         }
 
-        private void OnPickupCreated(PickupBase obj)
+        private void OnPickupSpawned(PickupBase obj)
         {
             _pickups.Add(obj);
         }

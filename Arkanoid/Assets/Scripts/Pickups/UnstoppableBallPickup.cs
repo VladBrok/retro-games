@@ -12,6 +12,8 @@ namespace Arkanoid.Pickups
 
         private Ball _ball;
         private ParticleSystem _effect;
+        private MonoBehaviour _coroutineRunner;
+        private WaitWhile _waitWhilePaused;
         private static float s_duration;
         private static bool s_effectIsActive;
 
@@ -20,15 +22,24 @@ namespace Arkanoid.Pickups
             base.Initialize(config);
             _ball = config.Ball;
             _effect = config.UnstoppableBallEffect;
+            _coroutineRunner = config.CoroutineRunner;
         }
 
         protected override void ApplyEffect()
         {
-            Debug.Log(s_effectIsActive);
             s_duration += _durationInSeconds;
             if (!s_effectIsActive)
             {
-                _ball.StartCoroutine(BecomeUnstoppableTemporarly());
+                _coroutineRunner.StartCoroutine(BecomeUnstoppableTemporarly());
+            }
+        }
+
+        private void OnDestroy()
+        {
+            if (s_effectIsActive)
+            {
+                s_effectIsActive = false;
+                s_duration = 0f;
             }
         }
 

@@ -18,13 +18,18 @@ namespace Arkanoid.Pickups
             StartFalling();
         }
 
-        public void Pause()
+        public void StartFalling()
+        {
+            _body.AddForce(Vector2.down * _fallForce);
+        }
+
+        public virtual void Pause()
         {
             _body.isKinematic = true;
             _body.velocity = Vector2.zero;
         }
 
-        public void Unpause()
+        public virtual void Unpause()
         {
             _body.isKinematic = false;
             StartFalling();
@@ -46,11 +51,6 @@ namespace Arkanoid.Pickups
             if (!other.GetComponent<Paddle>()) return;
 
             ApplyEffect();
-        }
-
-        private void StartFalling()
-        {
-            _body.AddForce(Vector2.down * _fallForce);            
         }
     }
 }

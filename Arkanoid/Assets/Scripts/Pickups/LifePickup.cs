@@ -4,7 +4,7 @@ namespace Arkanoid.Pickups
 {
     public class LifePickup : PickupBase
     {
-        private UI _ui;
+        private MainUI _ui;
 
         public override void Initialize(PickupConfig config)
         {

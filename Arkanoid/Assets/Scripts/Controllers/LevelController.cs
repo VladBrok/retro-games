@@ -7,7 +7,7 @@ namespace Arkanoid.Controllers
 {
     public class LevelController : MonoBehaviour
     {
-        [SerializeField] private UI _ui;
+        [SerializeField] private MainUI _ui;
         [SerializeField] private Paddle _paddle;
         [SerializeField] private Ball _ball;
         [SerializeField] private List<Transform> _bricksInEachLevelPrefabs;
@@ -50,10 +50,7 @@ namespace Arkanoid.Controllers
             {
                 if (CurrentLevelIsLast())
                 {
-                    // TODO: Add an ability to hide paddle and ball.
-                    ResetPaddleAndBall();
-                    _paddle.Pause();
-                    _ball.Pause();
+                    TogglePaddleAndBallActive(false);
                     _ui.ShowVictoryCanvas();
                     return;
                 }
@@ -80,18 +77,22 @@ namespace Arkanoid.Controllers
 
         private IEnumerator UpdateLevelRoutine()
         {
-            _paddle.Pause();
-            _ball.Pause();
+            TogglePaddleAndBallActive(false);
             yield return _ui.UpdateLevelRoutine(_currentLevel);
             InstantiateNewBricks();
-            _paddle.Unpause();
-            _paddle.Unpause();
+            TogglePaddleAndBallActive(true);
         }
 
         private void ResetPaddleAndBall()
         {
             _paddle.Reset();
             _ball.Reset();
+        }
+
+        private void TogglePaddleAndBallActive(bool active)
+        {
+            _paddle.gameObject.SetActive(active);
+            _ball.gameObject.SetActive(active);
         }
 
         private void InstantiateNewBricks()
