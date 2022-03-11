@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Arkanoid.Input;
 
 namespace Arkanoid
 {
@@ -13,6 +14,7 @@ namespace Arkanoid
         private Vector2 _startPosition;
         private Vector2 _direction;
         private bool _ballLaunched;
+        private IPaddleInput _input;
 
         public void Reset()
         {
@@ -34,16 +36,20 @@ namespace Arkanoid
         {
             _body = GetComponent<Rigidbody2D>();
             _startPosition = transform.position;
+#if UNITY_IOS || UNITY_ANDROID
+            _input = new TouchPaddleInput(Camera.main, transform);
+#else
+            _input = new KeyboardPaddleInput();
+#endif
         }
 
         private void Update()
         {
-            _direction = GetDirectionFromInput();
-            if (!_ballLaunched)
-            {
-                PutBallOnPaddle();
-            }
-            if (ShouldLaunchBall())
+            _direction = _input.MovementDirection;
+            if (_ballLaunched) return;
+            
+            PutBallOnPaddle();
+            if (_input.LaunchBall)
             {
                 LaunchBall();
             }
@@ -52,18 +58,6 @@ namespace Arkanoid
         private void FixedUpdate()
         {
             _body.MovePosition(_body.position + _direction * _speed * Time.fixedDeltaTime);
-        }
-
-        private Vector2 GetDirectionFromInput()
-        {
-            return Input.GetKey(KeyCode.A) ? Vector2.left :
-                   Input.GetKey(KeyCode.D) ? Vector2.right :
-                   Vector2.zero;
-        }
-
-        private bool ShouldLaunchBall()
-        {
-            return Input.GetKeyDown(KeyCode.Space) && !_ballLaunched;
         }
 
         private void LaunchBall()
