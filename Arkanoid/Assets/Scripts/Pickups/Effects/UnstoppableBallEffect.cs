@@ -2,54 +2,54 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Arkanoid.Pickups
+namespace Arkanoid.Pickups.Effects
 {
-    public class UnstoppableBallPickup : PickupBase
+    public class UnstoppableBallEffect : EffectBase, IPausable
     {
         [SerializeField] [Range(1f, 100f)] private float _durationInSeconds;
         [SerializeField] [Range(0.3f, 1f)] private float _raycastDistance;
         [SerializeField] private LayerMask _brickLayer;
+        [SerializeField] private Ball _ball;
+        [SerializeField] private ParticleSystem _effect;
 
-        private Ball _ball;
-        private ParticleSystem _effect;
-        private MonoBehaviour _coroutineRunner;
         private WaitWhile _waitWhilePaused;
-        private static float s_duration;
-        private static bool s_effectIsActive;
+        private float _duration;
+        private bool _applied;
+        private bool _paused;
 
-        public override void Initialize(PickupConfig config)
+        public void Pause()
         {
-            base.Initialize(config);
-            _ball = config.Ball;
-            _effect = config.UnstoppableBallEffect;
-            _coroutineRunner = config.CoroutineRunner;
+            _paused = true;
         }
 
-        protected override void ApplyEffect()
+        public void Unpause()
         {
-            s_duration += _durationInSeconds;
-            if (!s_effectIsActive)
+            _paused = false;
+        }
+
+        public override void Apply()
+        {
+            _duration += _durationInSeconds;
+            if (!_applied)
             {
-                _coroutineRunner.StartCoroutine(BecomeUnstoppableTemporarly());
+                StartCoroutine(BecomeUnstoppableTemporarly());
             }
         }
 
-        private void OnDestroy()
+        private void Awake()
         {
-            if (s_effectIsActive)
-            {
-                s_effectIsActive = false;
-                s_duration = 0f;
-            }
+            _waitWhilePaused = new WaitWhile(() => _paused);
         }
-
+    
         private IEnumerator BecomeUnstoppableTemporarly()
         {
             ToggleEffectActive(true);
-            while (s_duration > 0f)
+            while (_duration > 0f)
             {
+                if (_paused) yield return _waitWhilePaused;
+
                 _ball.Bounceable = !BrickIsAhead();
-                s_duration = Mathf.Max(0f, s_duration - Time.deltaTime);
+                _duration = Mathf.Max(0f, _duration - Time.deltaTime);
                 yield return null;
             }
             _ball.Bounceable = true;
@@ -58,7 +58,7 @@ namespace Arkanoid.Pickups
 
         private void ToggleEffectActive(bool active)
         {
-            s_effectIsActive = active;
+            _applied = active;
             _effect.gameObject.SetActive(active);
         }
 

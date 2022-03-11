@@ -1,16 +1,16 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-namespace Arkanoid.Pickups
+namespace Arkanoid.Pickups.Effects
 {
-    public class ExpandPaddlePickup : PickupBase
+    public class ExpandPaddleEffect : EffectBase, IPausable
     {
         [SerializeField] [Range(1f, 10f)] private float _widthMultiplier;
         [SerializeField] [Range(1f, 100f)] private float _durationInSeconds;
+        [SerializeField] private Paddle _paddle;
 
-        private WaitForSeconds _waitForEffectDuration;
-        private Paddle _paddle;
-        private MonoBehaviour _coroutineRunner;
+        private WaitWhile _waitWhilePaused;
+        private bool _paused;
 
         private Vector3 PaddleScale
         {
@@ -18,28 +18,37 @@ namespace Arkanoid.Pickups
             set { _paddle.transform.localScale = value; }
         }
 
-        public override void Initialize(PickupConfig config)
+        public void Pause()
         {
-            base.Initialize(config);
-            _paddle = config.Paddle;
-            _coroutineRunner = config.CoroutineRunner;
+            _paused = true;
         }
 
-        protected override void Awake()
+        public void Unpause()
         {
-            base.Awake();
-            _waitForEffectDuration = new WaitForSeconds(_durationInSeconds);
+            _paused = false;
         }
 
-        protected override void ApplyEffect()
+        public override void Apply()
         {
-            _coroutineRunner.StartCoroutine(ExpandTemporarly());
+            StartCoroutine(ExpandTemporarly());
+        }
+
+        private void Awake()
+        {
+            _waitWhilePaused = new WaitWhile(() => _paused);
         }
 
         private IEnumerator ExpandTemporarly()
         {
             UpdatePaddleWidth(PaddleScale.x * _widthMultiplier);
-            yield return _waitForEffectDuration;
+            float duration = _durationInSeconds;
+            while (duration > 0f)
+            {
+                if (_paused) yield return _waitWhilePaused;
+
+                duration -= Time.deltaTime;
+                yield return null;
+            }
             UpdatePaddleWidth(PaddleScale.x / _widthMultiplier);
         }
 

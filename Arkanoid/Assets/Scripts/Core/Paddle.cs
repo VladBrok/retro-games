@@ -4,7 +4,7 @@ namespace Arkanoid
 {
     [RequireComponent(typeof(Rigidbody2D))]
     [RequireComponent(typeof(Collider2D))]
-    public class Paddle : MonoBehaviour
+    public class Paddle : MonoBehaviour, IPausable
     {
         [SerializeField] private Ball _ball;
         [SerializeField] [Range(1f, 10f)] private float _speed;

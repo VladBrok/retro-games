@@ -1,47 +1,47 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace Arkanoid
 {
     public class Pool<T> where T : Component
     {
-        private readonly List<T> _objects;
+        private readonly T _prefab;
         private readonly Action<T> _initialize;
+        private readonly Queue<T> _objects;
 
-        public Pool(Action<T> initialize)
+        public Pool(T prefab, Action<T> initialize)
         {
-            _objects = new List<T>();
+            _prefab = prefab;
             _initialize = initialize;
+            _objects = new Queue<T>();
         }
 
-        public T Get(T prefab, Vector2 position)
+        public T Get(Vector2 position)
         {
-            T obj = _objects.FirstOrDefault(o => o.GetType().Equals(prefab.GetType()));
-            if (obj == default(T))
+            if (_objects.Count == 0)
             {
-                return CreateNew(prefab, position);
+                return CreateNew(position);
             }
-            return GetExisting(obj, position);
+            return GetExisting(position);
         }
 
         public void Return(T obj)
         {
             obj.gameObject.SetActive(false);
-            _objects.Add(obj);
+            _objects.Enqueue(obj);
         }
 
-        private T CreateNew(T prefab, Vector2 position)
+        private T CreateNew(Vector2 position)
         {
-            T obj = GameObject.Instantiate(prefab, position, Quaternion.identity);
+            T obj = GameObject.Instantiate(_prefab, position, Quaternion.identity);
             _initialize(obj);
             return obj;
         }
 
-        private T GetExisting(T obj, Vector2 position)
+        private T GetExisting(Vector2 position)
         {
-            _objects.Remove(obj);
+            T obj = _objects.Dequeue();
             obj.gameObject.SetActive(true);
             obj.transform.position = position;
             return obj;

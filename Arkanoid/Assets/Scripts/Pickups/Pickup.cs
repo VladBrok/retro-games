@@ -1,20 +1,26 @@
 ﻿using System;
 using UnityEngine;
+using Arkanoid.Pickups.Effects;
 
 namespace Arkanoid.Pickups
 {
     [RequireComponent(typeof(Collider2D))]
     [RequireComponent(typeof(Rigidbody2D))]
-    public abstract class PickupBase : MonoBehaviour
+    [RequireComponent(typeof(SpriteRenderer))]
+    public class Pickup : MonoBehaviour, IPausable
     {
-        public event Action<PickupBase> TriggerEntered = delegate { };
+        public event Action<Pickup> TriggerEntered = delegate { };
 
         private Rigidbody2D _body;
+        private SpriteRenderer _renderer;
+        private EffectBase _effect;
         private float _fallForce;
 
-        public virtual void Initialize(PickupConfig config)
+        public void Initialize(EffectBase effect, float fallForce)
         {
-            _fallForce = config.FallForce;
+            _renderer.sprite = effect.Sprite;
+            _fallForce = fallForce;
+            _effect = effect;
             StartFalling();
         }
 
@@ -23,34 +29,33 @@ namespace Arkanoid.Pickups
             _body.AddForce(Vector2.down * _fallForce);
         }
 
-        public virtual void Pause()
+        public void Pause()
         {
             _body.isKinematic = true;
             _body.velocity = Vector2.zero;
         }
 
-        public virtual void Unpause()
+        public void Unpause()
         {
             _body.isKinematic = false;
             StartFalling();
         }
 
-        protected virtual void Awake()
+        private void Awake()
         {
             _body = GetComponent<Rigidbody2D>();
+            _renderer = GetComponent<SpriteRenderer>();
             Debug.Assert(
                 GetComponent<Collider2D>().isTrigger, 
                 gameObject.name + " should have a trigger collider.");
         }
-
-        protected abstract void ApplyEffect();
 
         private void OnTriggerEnter2D(Collider2D other)
         {
             TriggerEntered.Invoke(this);
             if (!other.GetComponent<Paddle>()) return;
 
-            ApplyEffect();
+            _effect.Apply();
         }
     }
 }

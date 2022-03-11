@@ -4,7 +4,7 @@ namespace Arkanoid
 {
     [RequireComponent(typeof(Rigidbody2D))]
     [RequireComponent(typeof(CircleCollider2D))]
-    public class Ball : MonoBehaviour
+    public class Ball : MonoBehaviour, IPausable
     {
         [SerializeField] [Range(100f, 1000f)] private float _launchForce;
         [SerializeField] [Range(0.1f, 1f)] private float _directionOffset;

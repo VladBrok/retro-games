@@ -2,25 +2,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Arkanoid.Pickups;
+using Arkanoid.Pickups.Effects;
 using Random = UnityEngine.Random;
 
 namespace Arkanoid.Controllers
 {
     public class PickupController : MonoBehaviour
     {
-        [SerializeField] private List<PickupBase> _pickupPrefabs;
-        [SerializeField] private PickupConfig _config;
+        [SerializeField] private Pickup _prefab;
+        [SerializeField] private List<EffectBase> _effects;
         [SerializeField] [Range(1f, 100f)] private float _spawnChance;
+        [SerializeField] [Range(3f, 100f)] private float _fallForce;
 
-        private Pool<PickupBase> _pool;
+        private Pool<Pickup> _pool;
 
-        public Action<PickupBase> PickupSpawned = delegate { };
-        public Action<PickupBase> PickupDestroyed = delegate { };
+        public Action<Pickup> PickupSpawned = delegate { };
+        public Action<Pickup> PickupDestroyed = delegate { };
 
         private void Awake()
         {
             Brick.Destroyed += OnBrickDestroyed;
-            _pool = new Pool<PickupBase>(InitializePickup);
+            _pool = new Pool<Pickup>(_prefab, p => p.TriggerEntered += OnPickupTriggerEntered);
         }
 
         private void OnDestroy()
@@ -36,22 +38,15 @@ namespace Arkanoid.Controllers
             }
         }
 
-        private void InitializePickup(PickupBase obj)
-        {
-            obj.TriggerEntered += OnPickupTriggerEntered;
-            obj.Initialize(_config);
-        }
-
         private void SpawnPickup(Vector2 position)
         {
-            PickupBase pickup = _pool.Get(
-                _pickupPrefabs[Random.Range(0, _pickupPrefabs.Count)],
-                position);
-            pickup.StartFalling();
-            PickupSpawned.Invoke(pickup);
+            Pickup obj = _pool.Get(position);
+            obj.Initialize(_effects[Random.Range(0, _effects.Count)], _fallForce);
+            obj.StartFalling();
+            PickupSpawned.Invoke(obj);
         }
 
-        private void OnPickupTriggerEntered(PickupBase obj)
+        private void OnPickupTriggerEntered(Pickup obj)
         {
             _pool.Return(obj);
             PickupDestroyed.Invoke(obj);
