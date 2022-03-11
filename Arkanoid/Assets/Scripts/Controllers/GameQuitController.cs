@@ -2,7 +2,7 @@
 
 namespace Arkanoid.Controllers
 {
-    public class GameQuitter : MonoBehaviour
+    public class GameQuitController : MonoBehaviour
     {
         public void Quit()
         {

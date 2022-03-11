@@ -1,10 +1,9 @@
 ﻿using System.Collections;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace Arkanoid.Pickups.Effects
 {
-    public class UnstoppableBallEffect : EffectBase, IPausable
+    public class UnstoppableBallEffect : PausableEffect
     {
         [SerializeField] [Range(1f, 100f)] private float _durationInSeconds;
         [SerializeField] [Range(0.3f, 1f)] private float _raycastDistance;
@@ -15,17 +14,6 @@ namespace Arkanoid.Pickups.Effects
         private WaitWhile _waitWhilePaused;
         private float _duration;
         private bool _applied;
-        private bool _paused;
-
-        public void Pause()
-        {
-            _paused = true;
-        }
-
-        public void Unpause()
-        {
-            _paused = false;
-        }
 
         public override void Apply()
         {
@@ -35,23 +23,11 @@ namespace Arkanoid.Pickups.Effects
                 StartCoroutine(BecomeUnstoppableTemporarly());
             }
         }
-
-        private void Awake()
-        {
-            _waitWhilePaused = new WaitWhile(() => _paused);
-        }
     
         private IEnumerator BecomeUnstoppableTemporarly()
         {
             ToggleEffectActive(true);
-            while (_duration > 0f)
-            {
-                if (_paused) yield return _waitWhilePaused;
-
-                _ball.Bounceable = !BrickIsAhead();
-                _duration = Mathf.Max(0f, _duration - Time.deltaTime);
-                yield return null;
-            }
+            yield return ExecuteWhileNotPausedRoutine(_duration, () => _ball.Bounceable = !BrickIsAhead());
             _ball.Bounceable = true;
             ToggleEffectActive(false);
         }

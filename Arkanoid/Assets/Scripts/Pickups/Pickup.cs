@@ -21,7 +21,6 @@ namespace Arkanoid.Pickups
             _renderer.sprite = effect.Sprite;
             _fallForce = fallForce;
             _effect = effect;
-            StartFalling();
         }
 
         public void StartFalling()

@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace Arkanoid.Controllers
 {
-    public class SceneLoader : MonoBehaviour
+    public class SceneLoadController : MonoBehaviour
     {
         [SerializeField] private Slider _progressBar;
         [SerializeField] private Canvas _loadingCanvas;
@@ -15,7 +15,9 @@ namespace Arkanoid.Controllers
         {
             _loadingCanvas.gameObject.SetActive(true);
             StartCoroutine(
-                LoadSceneRoutine(name, whenLoaded: () => _loadingCanvas.gameObject.SetActive(false)));
+                LoadSceneRoutine(
+                    name, 
+                    whenLoaded: () => _loadingCanvas.gameObject.SetActive(false)));
         }
 
         private IEnumerator LoadSceneRoutine(string name, Action whenLoaded)
